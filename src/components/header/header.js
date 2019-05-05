@@ -14,17 +14,13 @@ export default class Header extends Component {
 
     constructor() {
         super();
-        this.settingsClick = function () {
-            const self = this.props;
-            self.onPaneChanged(HeaderButtons.BUTTON_SETTINGS);
+        this.settingsClick = () => {
+            this.props.onPaneChanged(HeaderButtons.BUTTON_SETTINGS);
         };
 
-        this.gameClick = function () {
-            const self = this.props;
-            self.onPaneChanged(HeaderButtons.BUTTON_GAME);
+        this.gameClick = () => {
+            this.props.onPaneChanged(HeaderButtons.BUTTON_GAME);
         };
-
-
     }
 
     render() {
