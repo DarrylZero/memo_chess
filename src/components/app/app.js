@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import './app.css';
 import GameField from './../game-field'
-import GameMode from '../settings/game-mode'
-import gameState from '../game-state'
+import GameMode from '../game-application-state/game-mode'
 import Header from '../header'
-import GameOver from "../game-over";
+import GameSettings from "../game-settings";
+import applicationState from '../game-application-state/application-state.js'
 
 
 export default class App extends Component {
@@ -12,23 +12,21 @@ export default class App extends Component {
 
     constructor() {
         super();
-        this.gameState = gameState;
-        this.getContent = function () {
+        this.state = applicationState;
 
-            switch (this.gameState.gameMode) {
-                case GameMode.GAME_SETTINGS: {
-                    return <GameOver/>;
+        this.getContent = function () {
+            switch (this.state.game.mode) {
+                case GameMode.SETTINGS: {
+                    return <GameSettings/>;
                 }
 
-                case GameMode.GAME_ON : {
+                case GameMode.ON : {
                     return <GameField/>;
                 }
 
                 default: {
                     return (
-                        <div className="App">
-                            <h2>Unexpected error</h2>
-                        </div>
+                       <h2>Unexpected error</h2>
                     );
                 }
             }
@@ -39,7 +37,7 @@ export default class App extends Component {
     render() {
         return (
             <div className="App">
-                <Header/>
+                <Header onPaneChanged={this.state.paneChanged.bind(this.state)} />
                 {this.getContent()}
             </div>
         );

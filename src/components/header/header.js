@@ -3,17 +3,25 @@ import React, {Component} from 'react'
 /**
  * https://getbootstrap.com/docs/4.0/components/buttons/
  */
-class Header extends Component {
+
+export class HeaderButtons {
+    static BUTTON_SETTINGS = 10;
+    static BUTTON_GAME = 20;
+}
+
+export default class Header extends Component {
 
 
     constructor() {
         super();
         this.settingsClick = function () {
-            console.log("settingsClick !~!")
+            const self = this.props;
+            self.onPaneChanged(HeaderButtons.BUTTON_SETTINGS);
         };
 
         this.gameClick = function () {
-            console.log("gameClick !~!")
+            const self = this.props;
+            self.onPaneChanged(HeaderButtons.BUTTON_GAME);
         };
 
 
@@ -25,18 +33,17 @@ class Header extends Component {
                 <button
                     type="button"
                     className="btn btn-info"
-                    onClick={this.gameClick}>game
+                    onClick={() => this.gameClick()}>game
                 </button>
                 <button
                     type="button"
                     className="btn btn-light"
-                    onClick={this.settingsClick}>settings
+                    onClick={() => this.settingsClick()}>settings
                 </button>
             </div>
         );
     }
 }
 
-export default Header;
 
 
