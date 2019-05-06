@@ -4,40 +4,81 @@ import GameField from './../game-field'
 import GameMode from '../game-application-state/game-mode'
 import Header from '../header'
 import GameSettings from "../game-settings";
-import applicationState from '../game-application-state/application-state.js'
+import {HeaderButtons} from '../header/header'
+import aiMode from '../game-settings/ai-mode'
 
 
 export default class App extends Component {
 
+    state = {
+        settings: {
+            aiMode: aiMode
+        },
 
-    constructor() {
-        super();
-        this.state = applicationState;
+        game: {
+            mode: GameMode.DEFAULT,
+            field: [
+                [{status: 20}, {status: 20}, {status: 20}, {status: 20}],
+                [{status: 20}, {status: 20}, {status: 20}, {status: 20}],
+                [{status: 20}, {status: 20}, {status: 20}, {status: 20}],
+                [{status: 20}, {status: 20}, {status: 20}, {status: 20}],
+                [{status: 20}, {status: 20}, {status: 20}, {status: 20}],
+                [{status: 20}, {status: 20}, {status: 20}, {status: 20}]
+            ]
+        },
 
-        this.getContent = function () {
-            switch (this.state.game.mode) {
-                case GameMode.SETTINGS: {
-                    return <GameSettings/>;
-                }
+    };
 
-                case GameMode.ON : {
-                    return <GameField/>;
-                }
-
-                default: {
-                    return (
-                       <h2>Unexpected error</h2>
-                    );
-                }
+    getContent = () => {
+        switch (this.state.game.mode) {
+            case GameMode.SETTINGS: {
+                return <GameSettings props={this.state.settings}/>;
             }
 
-        };
-    }
+            case GameMode.ON : {
+                return <GameField/>;
+            }
+
+            default: {
+                return (
+                    <h2>Unexpected error</h2>
+                );
+            }
+        }
+    };
+
+    paneChanged = (paneId) => {
+        switch (paneId) {
+
+            case  HeaderButtons.BUTTON_SETTINGS : {
+                this.setState({
+                    game: {
+                        mode: GameMode.SETTINGS
+                    }
+                });
+                break;
+            }
+
+            case  HeaderButtons.BUTTON_GAME : {
+                this.setState({
+                    game: {
+                        mode: GameMode.ON
+                    }
+                });
+                break;
+            }
+
+            default : {
+                console.log(`Pane ${paneId} is not known`)
+            }
+        }
+    };
+
 
     render() {
         return (
             <div className="App">
-                <Header onPaneChanged={this.state.paneChanged.bind(this.state)} />
+                <Header onPaneChanged={this.paneChanged}/>
                 {this.getContent()}
             </div>
         );
