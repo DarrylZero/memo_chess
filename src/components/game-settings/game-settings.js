@@ -5,7 +5,7 @@ import {AI_MODE} from './ai-mode'
 export default class GameSettings extends Component {
 
     render() {
-        const {aiMode} = this.props;
+        const {aiMode} = this.props.settings;
 
         // AI_MODE.forE
 

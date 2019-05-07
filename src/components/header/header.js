@@ -7,34 +7,29 @@ import React, {Component} from 'react'
 export class HeaderButtons {
     static BUTTON_SETTINGS = 10;
     static BUTTON_GAME = 20;
+    static ABOUT_BUTTON = 30;
 }
 
 export default class Header extends Component {
 
-
-    constructor() {
-        super();
-        this.settingsClick = () => {
-            this.props.onPaneChanged(HeaderButtons.BUTTON_SETTINGS);
-        };
-
-        this.gameClick = () => {
-            this.props.onPaneChanged(HeaderButtons.BUTTON_GAME);
-        };
-    }
-
     render() {
+        const onPaneChanged = this.props.onPaneChanged;
         return (
             <div className="btn-group">
                 <button
                     type="button"
                     className="btn btn-info"
-                    onClick={() => this.gameClick()}>game
+                    onClick={() => {onPaneChanged(HeaderButtons.BUTTON_GAME)}}>game
                 </button>
                 <button
                     type="button"
                     className="btn btn-light"
-                    onClick={() => this.settingsClick()}>settings
+                    onClick={() => {onPaneChanged(HeaderButtons.BUTTON_SETTINGS)}}>settings
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => {onPaneChanged(HeaderButtons.ABOUT_BUTTON)}}>about
                 </button>
             </div>
         );

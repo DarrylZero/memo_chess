@@ -5,7 +5,7 @@ import GameMode from '../game-application-state/game-mode'
 import Header from '../header'
 import GameSettings from "../game-settings";
 import {HeaderButtons} from '../header/header'
-import aiMode from '../game-settings/ai-mode'
+import GameAbout from "../component-about/component-about";
 
 
 export default class App extends Component {
@@ -32,23 +32,34 @@ export default class App extends Component {
     getContent = () => {
         switch (this.state.game.mode) {
             case GameMode.SETTINGS: {
-                return <GameSettings props={this.state.settings}/>;
+                return <GameSettings settings={this.state.settings}/>;
             }
 
             case GameMode.ON : {
-                return <GameField/>;
+                return <GameField field={this.state.game.field}/>;
+            }
+
+            case GameMode.ABOUT : {
+                return <GameAbout/>;
             }
 
             default: {
-                return (
-                    <h2>Unexpected error</h2>
-                );
+                return <h2>Unexpected error</h2>
             }
         }
     };
 
     paneChanged = (paneId) => {
         switch (paneId) {
+
+            case  HeaderButtons.ABOUT_BUTTON : {
+                this.setState({
+                    game: {
+                        mode: GameMode.ABOUT
+                    }
+                });
+                break;
+            }
 
             case  HeaderButtons.BUTTON_SETTINGS : {
                 this.setState({
