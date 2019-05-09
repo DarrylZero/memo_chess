@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import {AI_MODE} from './ai-mode'
-
+import {AI_MODE} from '../consts/ai-mode'
+import './game-settings.css';
 
 export default class GameSettings extends Component {
 

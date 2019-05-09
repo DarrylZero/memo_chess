@@ -1,17 +1,21 @@
 import React, {Component} from 'react'
-import './field-row.css'
 import FieldCell from "../field-cell";
+import './field-row.css'
 
 export default class FieldRow extends Component {
 
     render() {
-        const {row, rowIndex, onCellClick} = this.props;
-        var cols = [];
+        const {row, rowIndex, onCellClick, debug} = this.props;
+        const cols = [];
         for (var colIndex = 0; colIndex < row.length; colIndex++) {
+            const col = colIndex;
+            const cellData = row[colIndex];
             cols.push(<FieldCell
-                rowIndex={rowIndex}
                 colIndex={colIndex}
-                onCellClick={onCellClick}
+                rowIndex={rowIndex}
+                cellData={cellData}
+                onCellClick={() => onCellClick(col, rowIndex)}
+                debug={debug}
             />)
         }
         return cols;

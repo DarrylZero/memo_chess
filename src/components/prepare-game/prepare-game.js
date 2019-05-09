@@ -1,4 +1,5 @@
 import React from 'react'
+import './prepare-game.css';
 
 function PrepareGame() {
     return (

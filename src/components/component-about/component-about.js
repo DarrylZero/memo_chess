@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import './component-about.css';
 
 export default class ApplicationAbout extends Component {
 
