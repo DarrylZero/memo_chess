@@ -7,7 +7,7 @@ export default class FieldRow extends Component {
     render() {
         const {row, rowIndex, onCellClick, debug} = this.props;
         const cols = [];
-        for (var colIndex = 0; colIndex < row.length; colIndex++) {
+        for (let colIndex = 0; colIndex < row.length; colIndex++) {
             const col = colIndex;
             const cellData = row[colIndex];
             cols.push(<FieldCell
@@ -18,7 +18,11 @@ export default class FieldRow extends Component {
                 debug={debug}
             />)
         }
-        return cols;
+        return (
+            <div>
+               *{cols}
+            </div>
+        );
     }
 
 }

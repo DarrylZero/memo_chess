@@ -1,4 +1,19 @@
-button.debugbutton {
+.game_field_debug_button {
     height: 60px;
-    width: 400px;
+    width: 200px;
+    color: blue;
+    border-radius: 30px;
+}
+
+.next_color_image {
+    height: 30px;
+    width: 30px;
+    border-width: 2px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.game_field_label {
+    text-align:center;
+
 }

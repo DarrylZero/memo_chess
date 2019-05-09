@@ -11,6 +11,8 @@ import DebugFlags from "../consts/debug-flags";
 import CellStatus from "../consts/cell-status";
 import CellColor from "../consts/cell-color";
 import MoveTurn from "../consts/move-turn";
+import {DEFAULT_ROW_COUNT} from "../consts/field-dimension.js"
+import {DEFAULT_COL_COUNT} from "../consts/field-dimension.js"
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED: CELL_STATUS_SHUT, CELL_STATUS_REVEALED} = CellStatus;
 const {DEFAULT_GAME_MODE} = GameMode;
@@ -29,8 +31,6 @@ export default class App extends Component {
         settings: {
             aiMode: DEFAULT_AI_MODE
         },
-
-
 
         game: {
             mode: DEFAULT_GAME_MODE,
@@ -67,15 +67,14 @@ export default class App extends Component {
             case CELL_STATUS_SHUT : {
                 if (newState.game.colorToFind === newState.game.field[rowIndex][colIndex].color) {
                     newState.game.field[rowIndex][colIndex].status = CELL_STATUS_REVEALED;
-                } else {
-                    alert();
                 }
+                this.nextColorToFind();
                 break;
             }
 
             case CELL_STATUS_REVEALED : {
 
-                break;
+                return;
             }
 
             default: {
@@ -93,6 +92,7 @@ export default class App extends Component {
                 return <GameField
                     field={this.state.game.field}
                     onCellClick={this.cellClick}
+                    onDebugButtonClick={this._debugButtonClick}
                     debug={this.state.debug}
                 />;
             }
@@ -140,6 +140,52 @@ export default class App extends Component {
         const newState = {...this.state};
         newState.game.colorToFind = CellColor.randomColor();
         this.setState(newState);
+    };
+
+    _debugButtonClick = (event) => {
+        switch (event.target.id) {
+            case "random_color_debug": {
+                console.log('random color = ' + CellColor.randomColor());
+                break;
+            }
+
+            case "rebuild_state" : {
+                console.log('rebuild_state');
+                this.restartGameState();
+                break;
+            }
+
+            default: {
+            }
+        }
+    };
+
+    restartGameState = () => {
+        const newState = {...this.state};
+        newState.game = {
+            mode: DEFAULT_GAME_MODE,
+            moveTurn: MoveTurn.YOU,
+            colorToFind: CellColor.randomColor(),
+            field: this.randomizeFields()
+        }
+        this.setState(newState);
+        console.log(`newState = ${newState}`);
+    };
+
+    randomizeFields = () => {
+        const rows = [];
+        for (let rowIndex = 0; rowIndex < DEFAULT_ROW_COUNT; rowIndex++) {
+            const aRow = [];
+            for (let colIndex = 0; colIndex < DEFAULT_COL_COUNT; colIndex++) {
+                aRow.push({
+                    status: DEFAULT_CELL_STATUS,
+                    color: CellColor.randomColor()
+                });
+            }
+            rows.push(aRow);
+        }
+        return rows;
     }
+
 
 };

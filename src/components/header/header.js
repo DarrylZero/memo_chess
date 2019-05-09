@@ -16,20 +16,20 @@ export default class Header extends Component {
     render() {
         const {onPaneChanged} = this.props;
         return (
-            <div className="btn-group">
+            <div>
                 <button
                     type="button"
-                    className="btn btn-info"
+                    className="btn"
                     onClick={() => {onPaneChanged(HeaderButtons.BUTTON_GAME)}}>game
                 </button>
                 <button
                     type="button"
-                    className="btn btn-light"
+                    className="btn"
                     onClick={() => {onPaneChanged(HeaderButtons.BUTTON_SETTINGS)}}>settings
                 </button>
                 <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn"
                     onClick={() => {onPaneChanged(HeaderButtons.ABOUT_BUTTON)}}>about
                 </button>
             </div>

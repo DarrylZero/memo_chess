@@ -1,6 +1,8 @@
 .quadrant {
-    height: 55px;
-    width: 55px;
+    height: 65px;
+    width: 65px;
     border-color: black;
-    font-size: small;
+    font-size: xx-small;
+    border-radius: 5px;
+    margin: 2px;
 }
