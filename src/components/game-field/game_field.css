@@ -3,6 +3,7 @@
     width: 200px;
     color: blue;
     border-radius: 30px;
+    margin-left: 20px;
 }
 
 .next_color_image {
@@ -14,6 +15,7 @@
 }
 
 .game_field_label {
-    text-align:center;
-
+    text-align: center;
+    color: blueviolet;
+    opacity: 1.2%;
 }

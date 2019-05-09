@@ -11,12 +11,10 @@ export default class FieldCell extends Component {
         const data = `col:${colIndex} row:${rowIndex}`;
 
         return (
-            <div>
                 <button
                     className={this._getClassName(cellData.status)}
                     onClick={() => onCellClick(colIndex, rowIndex)}>{data}
                 </button>
-            </div>
         )
     }
 
