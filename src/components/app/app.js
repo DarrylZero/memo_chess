@@ -5,6 +5,7 @@ import GameMode from '../game-application-state/game-mode'
 import Header from '../header'
 import GameSettings from "../game-settings";
 import {HeaderButtons} from '../header/header'
+import {DEFAULT_AI_MODE} from '../game-settings/ai-mode'
 import GameAbout from "../component-about/component-about";
 
 
@@ -12,7 +13,7 @@ export default class App extends Component {
 
     state = {
         settings: {
-            aiMode: aiMode
+            aiMode: DEFAULT_AI_MODE
         },
 
         game: {
@@ -29,14 +30,27 @@ export default class App extends Component {
 
     };
 
+    render() {
+        return (
+            <div className="App">
+                <Header onPaneChanged={this.paneChanged}/>
+                {this.getContent()}
+            </div>
+        );
+    }
+
+    cellClick(colIndex, rowIndex) {
+        console.log(`col ${colIndex}, row ${rowIndex}`);
+    }
+
     getContent = () => {
         switch (this.state.game.mode) {
-            case GameMode.SETTINGS: {
-                return <GameSettings settings={this.state.settings}/>;
+            case GameMode.ON : {
+                return <GameField field={this.state.game.field} onCellClick={this.cellClick}/>;
             }
 
-            case GameMode.ON : {
-                return <GameField field={this.state.game.field}/>;
+            case GameMode.SETTINGS: {
+                return <GameSettings settings={this.state.settings}/>;
             }
 
             case GameMode.ABOUT : {
@@ -50,32 +64,20 @@ export default class App extends Component {
     };
 
     paneChanged = (paneId) => {
+        const newState = {...this.state};
         switch (paneId) {
+            case  HeaderButtons.BUTTON_GAME : {
+                newState.game.mode = GameMode.ON;
+                break;
+            }
 
             case  HeaderButtons.ABOUT_BUTTON : {
-                this.setState({
-                    game: {
-                        mode: GameMode.ABOUT
-                    }
-                });
+                newState.game.mode = GameMode.ABOUT;
                 break;
             }
 
             case  HeaderButtons.BUTTON_SETTINGS : {
-                this.setState({
-                    game: {
-                        mode: GameMode.SETTINGS
-                    }
-                });
-                break;
-            }
-
-            case  HeaderButtons.BUTTON_GAME : {
-                this.setState({
-                    game: {
-                        mode: GameMode.ON
-                    }
-                });
+                newState.game.mode = GameMode.SETTINGS;
                 break;
             }
 
@@ -83,16 +85,7 @@ export default class App extends Component {
                 console.log(`Pane ${paneId} is not known`)
             }
         }
+        this.setState(newState);
     };
-
-
-    render() {
-        return (
-            <div className="App">
-                <Header onPaneChanged={this.paneChanged}/>
-                {this.getContent()}
-            </div>
-        );
-    }
 
 };

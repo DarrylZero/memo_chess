@@ -4,9 +4,14 @@ import './field-cell.css'
 export default class FieldCell extends Component {
 
     render() {
+        const {colIndex, rowIndex, onCellClick} = this.props;
+        const data = `col:${colIndex} row:${rowIndex}`;
 
-
-        return <h1>Kind A cell</h1>
+        return (
+            <div>
+                <h1 onClick={() => onCellClick}>{data}</h1>
+            </div>
+        )
     }
 
 }

@@ -13,7 +13,7 @@ export class HeaderButtons {
 export default class Header extends Component {
 
     render() {
-        const onPaneChanged = this.props.onPaneChanged;
+        const {onPaneChanged} = this.props;
         return (
             <div className="btn-group">
                 <button

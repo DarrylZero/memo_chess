@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import FieldCell from '../field-cell'
 import FieldRow from '../field-row'
 
 export default class GameField extends Component {
@@ -9,22 +8,20 @@ export default class GameField extends Component {
 
         return (
             <div>
-                <ul>
-                    {this.rows(field)};
-                </ul>
+                {this.rows(field)};
             </div>
         );
     }
 
     rows(field) {
-        var data = [];
-        for (var rowIndex = 0; rowIndex < field.length; rowIndex++) {
-            // const aRow = field[rowIndex];
-            data.push(<FieldRow row={field[rowIndex]} index={rowIndex}/>)
-        }
-        return data;
-    };
+        const onCellClick = this.props.onCellClick;
 
+        var rows = [];
+        for (var rowIndex = 0; rowIndex < field.length; rowIndex++) {
+            rows.push(<FieldRow row={field[rowIndex]} rowIndex={rowIndex} onCellClick={onCellClick} />)
+        }
+        return rows;
+    };
 
 }
 

@@ -1,6 +1,6 @@
 const DEFAULT_AI_MODE = 10;
 
-const AI_MODE = {
+export const AI_MODE = {
 
     aiOptions: [
         {index: DEFAULT_AI_MODE, name: "Dumb"},
@@ -8,6 +8,5 @@ const AI_MODE = {
     ]
 };
 
-export default AI_MODE;
 export {DEFAULT_AI_MODE};
 
