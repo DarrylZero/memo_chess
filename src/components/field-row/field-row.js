@@ -9,18 +9,18 @@ export default class FieldRow extends Component {
         const cols = [];
         for (let colIndex = 0; colIndex < row.length; colIndex++) {
             const col = colIndex;
-            const cellData = row[colIndex];
+            const cell = row[colIndex];
             cols.push(<FieldCell
                 colIndex={colIndex}
                 rowIndex={rowIndex}
-                cellData={cellData}
+                cell={cell}
                 onCellClick={() => onCellClick(col, rowIndex)}
                 debug={debug}
             />)
         }
         return (
             <div>
-               *{cols}
+             .               .{cols}
             </div>
         );
     }

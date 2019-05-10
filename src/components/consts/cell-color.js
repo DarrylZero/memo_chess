@@ -3,13 +3,13 @@
 export default class CellColor {
 
 
-    static RED = 10;
-    static ORANGE = 20;
-    static YELLOW = 30;
-    static GREEN = 40;
-    static LIGHT_BLUE = 50;
-    static BLUE = 60;
-    static INDIGO = 70;
+    static RED = "red";
+    static ORANGE = "orange";
+    static YELLOW = "yellow";
+    static GREEN = "green";
+    static LIGHT_BLUE = "light_blue";
+    static BLUE = "blue";
+    static INDIGO = "indigo";
 
     static COLORS = [
         this.RED,

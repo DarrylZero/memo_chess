@@ -7,12 +7,12 @@ const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED} = CellStat
 export default class FieldCell extends Component {
 
     render() {
-        const {colIndex, rowIndex, onCellClick, cellData} = this.props;
-        const data = `col:${colIndex} row:${rowIndex}`;
+        const {colIndex, rowIndex, onCellClick, cell:{status, color}} = this.props;
+        const data = `col:${colIndex} row:${rowIndex} color:${color}`;
 
         return (
                 <button
-                    className={this._getClassName(cellData.status)}
+                    className={this._getClassName(status)}
                     onClick={() => onCellClick(colIndex, rowIndex)}>{data}
                 </button>
         )
