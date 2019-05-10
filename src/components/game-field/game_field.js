@@ -1,12 +1,13 @@
 import React, {Component} from 'react'
 import FieldRow from '../field-row'
 import './game_field.css';
+import FieldCell from "../field-cell";
 
 
 export default class GameField extends Component {
 
     render() {
-        const {field, onDebugButtonClick} = this.props;
+        const {field, onDebugButtonClick, colorToFind} = this.props;
 
         return (
             <div>
@@ -23,11 +24,16 @@ export default class GameField extends Component {
                         className="game_field_debug_button"
                         onClick={onDebugButtonClick}>
                     Rebuild state
-
+                </button>
+                <button type="button"
+                        color="red"
+                        id="start_timer"
+                        className="game_field_debug_button"
+                        onClick={onDebugButtonClick}>
+                    start timer - debug
                 </button>
                 <br/>
-                <label className="game_field_label"> ss </label>
-                <img className="next_color_image" color="red" />
+                <label className="game_field_label">color to find is --- {colorToFind}</label>
 
 
 

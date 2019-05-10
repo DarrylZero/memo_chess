@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import './header.css';
-import Timer from '../timer/timer';
 
 /**
  * https://getbootstrap.com/docs/4.0/components/buttons/
@@ -33,7 +32,6 @@ export default class Header extends Component {
                     className="btn"
                     onClick={() => {onPaneChanged(HeaderButtons.ABOUT_BUTTON)}}>about
                 </button>
-                <Timer/>
             </div>
         );
     }

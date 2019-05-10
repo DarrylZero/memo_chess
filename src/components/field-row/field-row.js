@@ -19,8 +19,8 @@ export default class FieldRow extends Component {
             />)
         }
         return (
-            <div>
-             .               .{cols}
+            <div className="field_cells">
+               {cols}
             </div>
         );
     }

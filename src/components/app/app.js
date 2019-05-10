@@ -13,21 +13,14 @@ import CellColor from "../consts/cell-color";
 import MoveTurn from "../consts/move-turn";
 import {DEFAULT_ROW_COUNT} from "../consts/field-dimension.js"
 import {DEFAULT_COL_COUNT} from "../consts/field-dimension.js"
+import Timer from "../../services/timer/timer";
 
-const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED: CELL_STATUS_SHUT, CELL_STATUS_REVEALED} = CellStatus;
+const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {DEFAULT_GAME_MODE} = GameMode;
-const {DEBUG_SHOW_INDEXES} = DebugFlags;
-
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
 export default class App extends Component {
 
     state = {
-        debug: {
-            flags: {
-                // [DEBUG_SHOW_INDEXES]:0
-            }
-        },
-
         settings: {
             aiMode: DEFAULT_AI_MODE
         },
@@ -38,15 +31,47 @@ export default class App extends Component {
             colorToFind: BLUE,
 
             field: [
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
             ]
         },
     };
+
+    constructor() {
+        super();
+        this.timer = new Timer();
+    }
+
+
+    componentDidMount() {
+        this.timer.init(1000);
+    }
+
+    componentWillUnmount() {
+        this.timer.shutdown();
+    }
 
     render() {
         return (
@@ -58,32 +83,35 @@ export default class App extends Component {
     };
 
     cellClick = (colIndex, rowIndex) => {
-        const newState = {...this.state};
-        const element = newState.game.field[rowIndex][colIndex];
-        console.log(`col: ${colIndex}, row: ${rowIndex}, element: ${element.status}`);
 
-        const oldStatus = newState.game.field[rowIndex][colIndex].status;
-        switch (oldStatus) {
-            case CELL_STATUS_SHUT : {
-                if (newState.game.colorToFind === newState.game.field[rowIndex][colIndex].color) {
-                    newState.game.field[rowIndex][colIndex].status = CELL_STATUS_REVEALED;
+        this.setState((prevState) => {
+
+            const newState = {...prevState};
+            switch (newState.game.field[rowIndex][colIndex].status) {
+                case CELL_STATUS_CLOSED : {
+                    if (newState.game.colorToFind === newState.game.field[rowIndex][colIndex].color) {
+                        newState.game.field[rowIndex][colIndex].status = CELL_STATUS_REVEALED;
+                    } else {
+                        newState.game.field[rowIndex][colIndex].status = CELL_STATUS_TEMPORARILY_SHOWN;
+                        this.timer.startTimer(this.dropTemporaryShown, 3000);
+                        console.log('timer is set');
+                    }
+                    this.nextColorToFind(newState);
+                    break;
                 }
-                this.nextColorToFind();
-                break;
+
+                case CELL_STATUS_REVEALED :
+                case CELL_STATUS_TEMPORARILY_SHOWN : {
+                    break;
+                }
+
+                default: {
+                    console.log(`unknown status ${newState.game.field[rowIndex][colIndex].status}`);
+                }
             }
+            return newState;
+        });
 
-            case CELL_STATUS_REVEALED : {
-
-                return;
-            }
-
-            default: {
-                console.log(`unknown status ${oldStatus}`);
-            }
-        }
-
-
-        this.setState(newState);
     };
 
     getContent = () => {
@@ -92,8 +120,8 @@ export default class App extends Component {
                 return <GameField
                     field={this.state.game.field}
                     onCellClick={this.cellClick}
+                    colorToFind={this.state.game.colorToFind}
                     onDebugButtonClick={this._debugButtonClick}
-                    debug={this.state.debug}
                 />;
             }
 
@@ -136,10 +164,40 @@ export default class App extends Component {
         this.setState(newState);
     };
 
-    nextColorToFind = () => {
+    dropTemporaryShown2_old = (params) => {
+        console.log('dropTemporaryShown');
+
         const newState = {...this.state};
-        newState.game.colorToFind = CellColor.randomColor();
+        for (let rowIndex = 0; rowIndex < newState.game.field.length; rowIndex++) {
+            for (let colIndex = 0; colIndex < newState.game.field[rowIndex].length; colIndex++) {
+                if (newState.game.field[rowIndex][colIndex].state === CELL_STATUS_TEMPORARILY_SHOWN) {
+                    newState.game.field[rowIndex][colIndex].state = CELL_STATUS_CLOSED;
+                    console.log(' status is changed !!');
+                }
+            }
+        }
         this.setState(newState);
+    };
+
+    dropTemporaryShown = (params) => {
+        console.log('dropTemporaryShown');
+
+        this.setState((prevState) => {
+            const newState = {...prevState};
+            for (let rowIndex = 0; rowIndex < newState.game.field.length; rowIndex++) {
+                for (let colIndex = 0; colIndex < newState.game.field[rowIndex].length; colIndex++) {
+                    if (newState.game.field[rowIndex][colIndex].state === CELL_STATUS_TEMPORARILY_SHOWN) {
+                        newState.game.field[rowIndex][colIndex].state = CELL_STATUS_CLOSED;
+                        console.log(' status is changed !!');
+                    }
+                }
+            }
+            return newState;
+        });
+    };
+
+    nextColorToFind = (newState) => {
+        newState.game.colorToFind = CellColor.randomColor();
     };
 
     _debugButtonClick = (event) => {
@@ -153,6 +211,12 @@ export default class App extends Component {
                 console.log('rebuild_state');
                 this.restartGameState();
                 break;
+            }
+
+            case "start_timer": {
+                this.timer.startTimer(
+                    params => console.log(`Ole ole ole ${params.toString()}`),
+                    5000, {re: 42});
             }
 
             default: {
