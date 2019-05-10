@@ -164,30 +164,17 @@ export default class App extends Component {
         this.setState(newState);
     };
 
-    dropTemporaryShown2_old = (params) => {
-        console.log('dropTemporaryShown');
-
-        const newState = {...this.state};
-        for (let rowIndex = 0; rowIndex < newState.game.field.length; rowIndex++) {
-            for (let colIndex = 0; colIndex < newState.game.field[rowIndex].length; colIndex++) {
-                if (newState.game.field[rowIndex][colIndex].state === CELL_STATUS_TEMPORARILY_SHOWN) {
-                    newState.game.field[rowIndex][colIndex].state = CELL_STATUS_CLOSED;
-                    console.log(' status is changed !!');
-                }
-            }
-        }
-        this.setState(newState);
-    };
-
     dropTemporaryShown = (params) => {
         console.log('dropTemporaryShown');
 
         this.setState((prevState) => {
             const newState = {...prevState};
             for (let rowIndex = 0; rowIndex < newState.game.field.length; rowIndex++) {
-                for (let colIndex = 0; colIndex < newState.game.field[rowIndex].length; colIndex++) {
-                    if (newState.game.field[rowIndex][colIndex].state === CELL_STATUS_TEMPORARILY_SHOWN) {
-                        newState.game.field[rowIndex][colIndex].state = CELL_STATUS_CLOSED;
+                const row = newState.game.field[rowIndex];
+                for (let colIndex = 0; colIndex < row.length; colIndex++) {
+                    const cell = row[colIndex];
+                    if (cell.status === CELL_STATUS_TEMPORARILY_SHOWN) {
+                        cell.status = CELL_STATUS_CLOSED;
                         console.log(' status is changed !!');
                     }
                 }
