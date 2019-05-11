@@ -9,14 +9,16 @@ import GameAbout from "../component-about/component-about";
 import CellStatus from "../consts/cell-status";
 import CellColor from "../consts/cell-color";
 import MoveTurn from "../consts/move-turn";
-import {DEFAULT_ROW_COUNT} from "../consts/field-dimension.js"
-import {DEFAULT_COL_COUNT} from "../consts/field-dimension.js"
+import {DEFAULT_COL_COUNT, DEFAULT_ROW_COUNT} from "../consts/field-dimension.js"
 import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
+import AppActions from "../actions/app-actions";
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
+const {CELL_CLICKED, RESTART} = AppActions;
+
 export default class App extends Component {
 
     state = {
@@ -25,8 +27,10 @@ export default class App extends Component {
         },
 
         game: {
-            mode: GAME,
+            activePane: GAME,
             moveTurn: MoveTurn.YOU,
+            winner: null,
+
             colorToFind: BLUE,
 
             field: [
@@ -81,10 +85,29 @@ export default class App extends Component {
         );
     };
 
-    cellClick = (colIndex, rowIndex) => {
+    dispatch = (event) => {
+        switch (event.action) {
+            case CELL_CLICKED : {
+                this._cellClick(event.colIndex, event.rowIndex);
+                return;
+            }
 
+            case RESTART : {
+                this.restartGame();
+                return;
+            }
+
+            default:
+                throw `unknown event ${event}`;
+        }
+
+    };
+
+
+    /*  ------------------------------------------------- privates ------------------------------------------------- */
+
+    _cellClick = (colIndex, rowIndex) => {
         this.setState((prevState) => {
-
             const newState = {...prevState};
             switch (newState.game.field[rowIndex][colIndex].status) {
                 case CELL_STATUS_CLOSED : {
@@ -113,27 +136,21 @@ export default class App extends Component {
     };
 
     getContent = () => {
-        switch (this.state.game.mode) {
+        switch (this.state.game.activePane) {
             case AppPanes.GAME : {
-                return <GameField
-                    field={this.state.game.field}
-                    onCellClick={this.cellClick}
-                    colorToFind={this.state.game.colorToFind}
-                    onDebugButtonClick={this.debugButtonClick}
-                />;
-
+                return <GameField state={this.state} dispatch={this.dispatch}/>;
             }
 
             case AppPanes.SETTINGS: {
-                return <GameSettings settings={this.state.settings}/>;
+                return <GameSettings state={this.state} dispatch={this.dispatch}/>;
             }
 
             case AppPanes.ABOUT : {
-                return <GameAbout/>;
+                return <GameAbout state={this.state} dispatch={this.dispatch}/>;
             }
 
             default: {
-                return <h2>Unexpected error</h2>
+                throw `Unexpected pane ${this.state.game.activePane}`;
             }
         }
     };
@@ -142,17 +159,17 @@ export default class App extends Component {
         const newState = {...this.state};
         switch (paneId) {
             case  HeaderButtons.BUTTON_GAME : {
-                newState.game.mode = AppPanes.GAME;
+                newState.game.activePane = AppPanes.GAME;
                 break;
             }
 
             case  HeaderButtons.ABOUT_BUTTON : {
-                newState.game.mode = AppPanes.ABOUT;
+                newState.game.activePane = AppPanes.ABOUT;
                 break;
             }
 
             case  HeaderButtons.BUTTON_SETTINGS : {
-                newState.game.mode = AppPanes.SETTINGS;
+                newState.game.activePane = AppPanes.SETTINGS;
                 break;
             }
 
@@ -182,10 +199,12 @@ export default class App extends Component {
         });
     };
 
+    // #ATTE
     nextColorToFind = (newState) => {
         newState.game.colorToFind = CellColor.randomColor();
     };
 
+    // #ATTE
     debugButtonClick = (event) => {
         switch (event.target.id) {
             case "rebuild_state" : {
@@ -199,10 +218,11 @@ export default class App extends Component {
         }
     };
 
+    // #ATTE
     restartGame = () => {
         const newState = {...this.state};
         newState.game = {
-            mode: GAME,
+            activePane: GAME,
             moveTurn: MoveTurn.YOU,
             colorToFind: CellColor.randomColor(),
             field: this.getRandomCells()
@@ -210,6 +230,7 @@ export default class App extends Component {
         this.setState(newState);
     };
 
+    // #ATTE
     getRandomCells = () => {
         const rows = [];
         for (let rowIndex = 0; rowIndex < DEFAULT_ROW_COUNT; rowIndex++) {

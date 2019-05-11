@@ -2,44 +2,32 @@ import React, {Component} from 'react'
 import FieldRow from '../../field-row'
 import './battle-field.css';
 import FieldCell from "../../field-cell";
+import GameField from "../game-field";
 
 
 export default class BattleField extends Component {
 
+
     render() {
-        const {field, onDebugButtonClick, colorToFind} = this.props;
+
+        const {state, dispatch} = this.props;
+        const field = state.game.field;
         return (
             <div>
-                <button type="button"
-                        color="red"
-                        id="rebuild_state"
-                        className="game_field_debug_button"
-                        onClick={onDebugButtonClick}>
-                    Rebuild state
-                </button>
-                <br/>
-                <label className="battle_field_label">color to find is --- {colorToFind}</label>
-
                 {this.rows(field)};
             </div>
         );
     }
 
-
-
-
-
     rows = (field) => {
-        const onCellClick = this.props.onCellClick;
-
+        const {onCellClick, dispatch} = this.props;
         let rows = [];
-        // rows.push(<button className=""/>)
         for (let rowIndex = 0; rowIndex < field.length; rowIndex++) {
             rows.push(<FieldRow
                 row={field[rowIndex]}
                 rowIndex={rowIndex}
+                dispatch={dispatch}
                 onCellClick={onCellClick}
-                debug={this.props.debug}
             />)
         }
         return rows;

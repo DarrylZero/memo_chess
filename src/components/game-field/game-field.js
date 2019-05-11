@@ -8,18 +8,14 @@ import GameOver from "./game-over";
 export default class GameField extends Component {
 
     render() {
-        const {field, onCellClick, colorToFind, onDebugButtonClick} = this.props;
-
-        const gameOver = <GameOver/>;
+        const {state, dispatch} = this.props;
+        const gameOver = state.game.winner != null ? <GameOver/> : null;
 
         return (
             <div className="game_field">
-                <BattleFieldHeader/>
-                <BattleField field={field}
-                             onCellClick={onCellClick}
-                             colorToFind={colorToFind}
-                             onDebugButtonClick={onDebugButtonClick}/>
-                <BattleFieldFooter/>
+                <BattleFieldHeader state={state} dispatch={dispatch}/>
+                <BattleField state={state} dispatch={dispatch}/>
+                <BattleFieldFooter state={state} dispatch={dispatch}/>
                 {gameOver}
             </div>
 
