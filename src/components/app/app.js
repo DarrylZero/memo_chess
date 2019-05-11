@@ -93,7 +93,7 @@ export default class App extends Component {
             }
 
             case RESTART : {
-                this.restartGame();
+                this._restartGame();
                 return;
             }
 
@@ -204,34 +204,18 @@ export default class App extends Component {
         newState.game.colorToFind = CellColor.randomColor();
     };
 
-    // #ATTE
-    debugButtonClick = (event) => {
-        switch (event.target.id) {
-            case "rebuild_state" : {
-                console.log('rebuild_state');
-                this.restartGame();
-                break;
-            }
-
-            default: {
-            }
-        }
-    };
-
-    // #ATTE
-    restartGame = () => {
+    _restartGame = () => {
         const newState = {...this.state};
         newState.game = {
             activePane: GAME,
             moveTurn: MoveTurn.YOU,
             colorToFind: CellColor.randomColor(),
-            field: this.getRandomCells()
+            field: this._getRandomCells()
         };
         this.setState(newState);
     };
 
-    // #ATTE
-    getRandomCells = () => {
+    _getRandomCells = () => {
         const rows = [];
         for (let rowIndex = 0; rowIndex < DEFAULT_ROW_COUNT; rowIndex++) {
             const aRow = [];

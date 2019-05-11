@@ -12,6 +12,7 @@ export default class FieldRow extends Component {
             const col = colIndex;
             const cell = row[colIndex];
             cols.push(<FieldCell
+                key={`${colIndex}_${rowIndex}`}
                 colIndex={colIndex}
                 rowIndex={rowIndex}
                 cell={cell}
