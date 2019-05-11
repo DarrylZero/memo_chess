@@ -1,12 +1,11 @@
-const DEFAULT_AI_MODE = 10;
+export const DUMB = "Dumb";
+export const GENIUS = "Genius";
 
 export const AI_MODE = {
 
     aiOptions: [
-        {index: DEFAULT_AI_MODE, name: "Dumb"},
-        {index: 20, name: "Genius"}
+        {name: DUMB},
+        {name: GENIUS}
     ]
 };
-
-export {DEFAULT_AI_MODE};
 

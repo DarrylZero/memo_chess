@@ -4,7 +4,7 @@ import AppPanes from '../consts/app-panes'
 import Header from '../header'
 import GameSettings from "../game-settings";
 import {HeaderButtons} from '../header/header'
-import {DEFAULT_AI_MODE} from '../consts/ai-mode'
+import {AI_MODE, DUMB} from '../consts/ai-mode'
 import GameAbout from "../component-about/component-about";
 import CellStatus from "../consts/cell-status";
 import CellColor from "../consts/cell-color";
@@ -17,13 +17,13 @@ import AppActions from "../actions/app-actions";
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
-const {CELL_CLICKED, RESTART} = AppActions;
+const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED} = AppActions;
 
 export default class App extends Component {
 
     state = {
         settings: {
-            aiMode: DEFAULT_AI_MODE
+            aiMode: DUMB
         },
 
         game: {
@@ -97,6 +97,14 @@ export default class App extends Component {
                 return;
             }
 
+            case AI_LEVEL_CHANGED: {
+                const newState = {...this.state};
+                newState.settings.aiMode = event.level;
+                this.setState(newState);
+                return;
+            }
+
+
             default:
                 throw `unknown event ${event}`;
         }
@@ -117,7 +125,7 @@ export default class App extends Component {
                         newState.game.field[rowIndex][colIndex].status = CELL_STATUS_TEMPORARILY_SHOWN;
                         this.timer.startTimer(this.dropTemporaryShown, 3000, {rowIndex, colIndex});
                     }
-                    this.nextColorToFind(newState);
+                    this._nextColorToFind(newState);
                     break;
                 }
 
@@ -142,7 +150,7 @@ export default class App extends Component {
             }
 
             case AppPanes.SETTINGS: {
-                return <GameSettings state={this.state} dispatch={this.dispatch}/>;
+                return <GameSettings settings={this.state.settings} dispatch={this.dispatch}/>;
             }
 
             case AppPanes.ABOUT : {
@@ -199,8 +207,7 @@ export default class App extends Component {
         });
     };
 
-    // #ATTE
-    nextColorToFind = (newState) => {
+    _nextColorToFind = (newState) => {
         newState.game.colorToFind = CellColor.randomColor();
     };
 
