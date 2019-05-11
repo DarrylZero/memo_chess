@@ -94,7 +94,6 @@ export default class App extends Component {
                     } else {
                         newState.game.field[rowIndex][colIndex].status = CELL_STATUS_TEMPORARILY_SHOWN;
                         this.timer.startTimer(this.dropTemporaryShown, 3000);
-                        console.log('timer is set');
                     }
                     this.nextColorToFind(newState);
                     break;
@@ -165,8 +164,6 @@ export default class App extends Component {
     };
 
     dropTemporaryShown = (params) => {
-        console.log('dropTemporaryShown');
-
         this.setState((prevState) => {
             const newState = {...prevState};
             for (let rowIndex = 0; rowIndex < newState.game.field.length; rowIndex++) {
@@ -175,7 +172,6 @@ export default class App extends Component {
                     const cell = row[colIndex];
                     if (cell.status === CELL_STATUS_TEMPORARILY_SHOWN) {
                         cell.status = CELL_STATUS_CLOSED;
-                        console.log(' status is changed !!');
                     }
                 }
             }
@@ -189,21 +185,10 @@ export default class App extends Component {
 
     _debugButtonClick = (event) => {
         switch (event.target.id) {
-            case "random_color_debug": {
-                console.log('random color = ' + CellColor.randomColor());
-                break;
-            }
-
             case "rebuild_state" : {
                 console.log('rebuild_state');
                 this.restartGameState();
                 break;
-            }
-
-            case "start_timer": {
-                this.timer.startTimer(
-                    params => console.log(`Ole ole ole ${params.toString()}`),
-                    5000, {re: 42});
             }
 
             default: {

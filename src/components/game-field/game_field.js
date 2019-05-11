@@ -13,29 +13,13 @@ export default class GameField extends Component {
             <div>
                 <button type="button"
                         color="red"
-                        id="random_color_debug"
-                        className="game_field_debug_button"
-                        onClick={onDebugButtonClick}>
-                    Random color debug
-                </button>
-                <button type="button"
-                        color="red"
                         id="rebuild_state"
                         className="game_field_debug_button"
                         onClick={onDebugButtonClick}>
                     Rebuild state
                 </button>
-                <button type="button"
-                        color="red"
-                        id="start_timer"
-                        className="game_field_debug_button"
-                        onClick={onDebugButtonClick}>
-                    start timer - debug
-                </button>
                 <br/>
                 <label className="game_field_label">color to find is --- {colorToFind}</label>
-
-
 
                 {this.rows(field)};
             </div>
