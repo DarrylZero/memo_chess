@@ -1,14 +1,13 @@
 import React, {Component} from 'react'
-import FieldRow from '../field-row'
-import './game_field.css';
-import FieldCell from "../field-cell";
+import FieldRow from '../../field-row'
+import './battle-field.css';
+import FieldCell from "../../field-cell";
 
 
-export default class GameField extends Component {
+export default class BattleField extends Component {
 
     render() {
         const {field, onDebugButtonClick, colorToFind} = this.props;
-
         return (
             <div>
                 <button type="button"
@@ -19,7 +18,7 @@ export default class GameField extends Component {
                     Rebuild state
                 </button>
                 <br/>
-                <label className="game_field_label">color to find is --- {colorToFind}</label>
+                <label className="battle_field_label">color to find is --- {colorToFind}</label>
 
                 {this.rows(field)};
             </div>

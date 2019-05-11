@@ -1,22 +1,21 @@
 import React, {Component} from 'react';
 import './app.css';
-import GameField from './../game-field'
-import GameMode from '../consts/game-mode'
+import AppPanes from '../consts/app-panes'
 import Header from '../header'
 import GameSettings from "../game-settings";
 import {HeaderButtons} from '../header/header'
 import {DEFAULT_AI_MODE} from '../consts/ai-mode'
 import GameAbout from "../component-about/component-about";
-import DebugFlags from "../consts/debug-flags";
 import CellStatus from "../consts/cell-status";
 import CellColor from "../consts/cell-color";
 import MoveTurn from "../consts/move-turn";
 import {DEFAULT_ROW_COUNT} from "../consts/field-dimension.js"
 import {DEFAULT_COL_COUNT} from "../consts/field-dimension.js"
 import Timer from "../../services/timer/timer";
+import GameField from "../game-field/game-field";
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
-const {DEFAULT_GAME_MODE} = GameMode;
+const {GAME} = AppPanes;
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
 export default class App extends Component {
 
@@ -26,7 +25,7 @@ export default class App extends Component {
         },
 
         game: {
-            mode: DEFAULT_GAME_MODE,
+            mode: GAME,
             moveTurn: MoveTurn.YOU,
             colorToFind: BLUE,
 
@@ -93,7 +92,7 @@ export default class App extends Component {
                         newState.game.field[rowIndex][colIndex].status = CELL_STATUS_REVEALED;
                     } else {
                         newState.game.field[rowIndex][colIndex].status = CELL_STATUS_TEMPORARILY_SHOWN;
-                        this.timer.startTimer(this.dropTemporaryShown, 3000);
+                        this.timer.startTimer(this.dropTemporaryShown, 3000, {rowIndex, colIndex});
                     }
                     this.nextColorToFind(newState);
                     break;
@@ -115,20 +114,21 @@ export default class App extends Component {
 
     getContent = () => {
         switch (this.state.game.mode) {
-            case GameMode.ON : {
+            case AppPanes.GAME : {
                 return <GameField
                     field={this.state.game.field}
                     onCellClick={this.cellClick}
                     colorToFind={this.state.game.colorToFind}
-                    onDebugButtonClick={this._debugButtonClick}
+                    onDebugButtonClick={this.debugButtonClick}
                 />;
+
             }
 
-            case GameMode.SETTINGS: {
+            case AppPanes.SETTINGS: {
                 return <GameSettings settings={this.state.settings}/>;
             }
 
-            case GameMode.ABOUT : {
+            case AppPanes.ABOUT : {
                 return <GameAbout/>;
             }
 
@@ -142,17 +142,17 @@ export default class App extends Component {
         const newState = {...this.state};
         switch (paneId) {
             case  HeaderButtons.BUTTON_GAME : {
-                newState.game.mode = GameMode.ON;
+                newState.game.mode = AppPanes.GAME;
                 break;
             }
 
             case  HeaderButtons.ABOUT_BUTTON : {
-                newState.game.mode = GameMode.ABOUT;
+                newState.game.mode = AppPanes.ABOUT;
                 break;
             }
 
             case  HeaderButtons.BUTTON_SETTINGS : {
-                newState.game.mode = GameMode.SETTINGS;
+                newState.game.mode = AppPanes.SETTINGS;
                 break;
             }
 
@@ -163,14 +163,17 @@ export default class App extends Component {
         this.setState(newState);
     };
 
-    dropTemporaryShown = (params) => {
+    dropTemporaryShown = (clickedCell) => {
         this.setState((prevState) => {
             const newState = {...prevState};
             for (let rowIndex = 0; rowIndex < newState.game.field.length; rowIndex++) {
                 const row = newState.game.field[rowIndex];
                 for (let colIndex = 0; colIndex < row.length; colIndex++) {
                     const cell = row[colIndex];
-                    if (cell.status === CELL_STATUS_TEMPORARILY_SHOWN) {
+                    if (cell.status === CELL_STATUS_TEMPORARILY_SHOWN &&
+                        clickedCell.rowIndex === rowIndex &&
+                        clickedCell.colIndex === colIndex) {
+
                         cell.status = CELL_STATUS_CLOSED;
                     }
                 }
@@ -183,11 +186,11 @@ export default class App extends Component {
         newState.game.colorToFind = CellColor.randomColor();
     };
 
-    _debugButtonClick = (event) => {
+    debugButtonClick = (event) => {
         switch (event.target.id) {
             case "rebuild_state" : {
                 console.log('rebuild_state');
-                this.restartGameState();
+                this.restartGame();
                 break;
             }
 
@@ -196,19 +199,18 @@ export default class App extends Component {
         }
     };
 
-    restartGameState = () => {
+    restartGame = () => {
         const newState = {...this.state};
         newState.game = {
-            mode: DEFAULT_GAME_MODE,
+            mode: GAME,
             moveTurn: MoveTurn.YOU,
             colorToFind: CellColor.randomColor(),
-            field: this.randomizeFields()
-        }
+            field: this.getRandomCells()
+        };
         this.setState(newState);
-        console.log(`newState = ${newState}`);
     };
 
-    randomizeFields = () => {
+    getRandomCells = () => {
         const rows = [];
         for (let rowIndex = 0; rowIndex < DEFAULT_ROW_COUNT; rowIndex++) {
             const aRow = [];

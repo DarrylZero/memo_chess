@@ -10,6 +10,7 @@ export default class CellColor {
     static LIGHT_BLUE = "light_blue";
     static BLUE = "blue";
     static INDIGO = "indigo";
+    static BROWN = "brown";
 
     static COLORS = [
         this.RED,
@@ -18,18 +19,19 @@ export default class CellColor {
         this.GREEN,
         this.LIGHT_BLUE,
         this.BLUE,
-        this.INDIGO
+        this.INDIGO,
+        this.BROWN
     ];
     static MAX_COLOR_COUNT = this.COLORS.length;
 
-    static _pickColor = (index) => {
+    static pickColor = (index) => {
         return this.COLORS[index];
     }
 
     static randomColor = () => {
-        let color = this._pickColor(Math.round(Math.random() * this.MAX_COLOR_COUNT));
+        let color = this.pickColor(Math.round(Math.random() * this.MAX_COLOR_COUNT));
         while(color === undefined) {
-            color = this._pickColor(Math.round(Math.random() * this.MAX_COLOR_COUNT));
+            color = this.pickColor(Math.round(Math.random() * this.MAX_COLOR_COUNT));
         }
         return color;
     }
