@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import './header.css';
-import AppActions from "../actions/app-actions";
+import AppActions from "../../actions/app-actions";
 import AppPanes from "../../consts/app-panes";
 
 /**

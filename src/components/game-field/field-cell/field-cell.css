@@ -2,8 +2,9 @@
     height: 80px;
     width: 80px;
     border-color: black;
-    font-size: xx-small;
+    font-size: medium;
     border-radius: 5px;
+    color: black;
     margin: 2px;
 }
 

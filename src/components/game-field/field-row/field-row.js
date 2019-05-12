@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import FieldCell from "../field-cell";
-import AppActions from "../actions/app-actions";
+import AppActions from "../../../actions/app-actions";
 import './field-row.css'
 
 export default class FieldRow extends Component {

@@ -4,20 +4,22 @@ import AppPanes from '../../consts/app-panes'
 import Header from '../header'
 import GameSettings from "../game-settings";
 import {DUMB} from '../../consts/ai-mode'
-import GameAbout from "../component-about/component-about";
+import GameAbout from "../about/component-about";
 import CellStatus from "../../consts/cell-status";
 import CellColor from "../../consts/cell-color";
 import MoveTurn from "../../consts/move-turn";
 import {DEFAULT_COL_COUNT, DEFAULT_ROW_COUNT} from "../../consts/field-dimension.js"
 import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
-import AppActions from "../actions/app-actions";
+import AppActions from "../../actions/app-actions";
+import GameState from "../../consts/game-state";
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
 const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, ACTIVE_PANE_CHANGED} = AppActions;
 const {YOU} = MoveTurn;
+const {CREATED, STARTED} = GameState;
 
 export default class App extends Component {
 
@@ -31,6 +33,7 @@ export default class App extends Component {
             moveTurn: YOU,
             winner: null,
             colorToFind: BLUE,
+            mode: CREATED,
 
             field: [
                 [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
@@ -119,6 +122,11 @@ export default class App extends Component {
     /*  ------------------------------------------------- privates ------------------------------------------------- */
 
     _cellClick = (colIndex, rowIndex) => {
+        if (this.state.game.mode !== STARTED) {
+            alert('start the game !!');
+            return
+        }
+
         this.setState((prevState) => {
             const newState = {...prevState};
             switch (newState.game.field[rowIndex][colIndex].status) {
@@ -211,6 +219,7 @@ export default class App extends Component {
         const newState = {...this.state};
         newState.game = {
             activePane: GAME,
+            mode: STARTED,
             moveTurn: MoveTurn.YOU,
             colorToFind: CellColor.randomColor(),
             field: this._getRandomCells()
