@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import './header.css';
+import AppActions from "../actions/app-actions";
 
 /**
  * https://getbootstrap.com/docs/4.0/components/buttons/
@@ -14,23 +15,23 @@ export class HeaderButtons {
 export default class Header extends Component {
 
     render() {
-        const {onPaneChanged} = this.props;
+        const {activePane, dispatch} = this.props;
         return (
             <div>
                 <button
                     type="button"
                     className="btn"
-                    onClick={() => {onPaneChanged(HeaderButtons.BUTTON_GAME)}}>game
+                    onClick={() => dispatch(AppActions.activePaneChanged(HeaderButtons.BUTTON_GAME))}>game
                 </button>
                 <button
                     type="button"
                     className="btn"
-                    onClick={() => {onPaneChanged(HeaderButtons.BUTTON_SETTINGS)}}>settings
+                    onClick={() => dispatch(AppActions.activePaneChanged(HeaderButtons.BUTTON_SETTINGS))}>settings
                 </button>
                 <button
                     type="button"
                     className="btn"
-                    onClick={() => {onPaneChanged(HeaderButtons.ABOUT_BUTTON)}}>about
+                    onClick={() => dispatch(AppActions.activePaneChanged(HeaderButtons.ABOUT_BUTTON))}>about
                 </button>
             </div>
         );

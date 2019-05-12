@@ -4,6 +4,7 @@ export default class AppActions {
     static DEBUG_ACTION = "debug action";
     static RESTART = "restart game";
     static AI_LEVEL_CHANGED = "ai level changed";
+    static ACTIVE_PANE_CHANGED = "active pane changed";
 
     static cellClick = (colIndex, rowIndex) => {
         return {action: this.CELL_CLICKED, colIndex, rowIndex}
@@ -21,5 +22,10 @@ export default class AppActions {
     static aiLevelChanged = (level) => {
         return {action: this.AI_LEVEL_CHANGED, level}
     };
+
+    static activePaneChanged = (paneId) => {
+        return {action: this.ACTIVE_PANE_CHANGED, paneId}
+    };
+
 
 }

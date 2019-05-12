@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import './field-cell.css'
-import CellStatus from "../consts/cell-status";
+import CellStatus from "../../consts/cell-status";
 const {CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 
 export default class FieldCell extends Component {

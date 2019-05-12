@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
 import './app.css';
-import AppPanes from '../consts/app-panes'
+import AppPanes from '../../consts/app-panes'
 import Header from '../header'
 import GameSettings from "../game-settings";
 import {HeaderButtons} from '../header/header'
-import {AI_MODE, DUMB} from '../consts/ai-mode'
+import {AI_MODE, DUMB} from '../../consts/ai-mode'
 import GameAbout from "../component-about/component-about";
-import CellStatus from "../consts/cell-status";
-import CellColor from "../consts/cell-color";
-import MoveTurn from "../consts/move-turn";
-import {DEFAULT_COL_COUNT, DEFAULT_ROW_COUNT} from "../consts/field-dimension.js"
+import CellStatus from "../../consts/cell-status";
+import CellColor from "../../consts/cell-color";
+import MoveTurn from "../../consts/move-turn";
+import {DEFAULT_COL_COUNT, DEFAULT_ROW_COUNT} from "../../consts/field-dimension.js"
 import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
 import AppActions from "../actions/app-actions";
@@ -17,7 +17,7 @@ import AppActions from "../actions/app-actions";
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
-const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED} = AppActions;
+const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, ACTIVE_PANE_CHANGED} = AppActions;
 
 export default class App extends Component {
 
@@ -79,7 +79,7 @@ export default class App extends Component {
     render() {
         return (
             <div className="App">
-                <Header onPaneChanged={this.paneChanged}/>
+                <Header dispatch={this.dispatch} activePane={this.state.activePane}/>
                 {this.getContent()}
             </div>
         );
@@ -101,6 +101,11 @@ export default class App extends Component {
                 const newState = {...this.state};
                 newState.settings.aiMode = event.level;
                 this.setState(newState);
+                return;
+            }
+
+            case ACTIVE_PANE_CHANGED : {
+                this._paneChanged(event.paneId);
                 return;
             }
 
@@ -163,7 +168,7 @@ export default class App extends Component {
         }
     };
 
-    paneChanged = (paneId) => {
+    _paneChanged = (paneId) => {
         const newState = {...this.state};
         switch (paneId) {
             case  HeaderButtons.BUTTON_GAME : {
