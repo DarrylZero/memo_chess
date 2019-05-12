@@ -3,21 +3,23 @@ import './app.css';
 import AppPanes from '../../consts/app-panes'
 import Header from '../header'
 import GameSettings from "../game-settings";
-import {HeaderButtons} from '../header/header'
-import {AI_MODE, DUMB} from '../../consts/ai-mode'
-import GameAbout from "../component-about/component-about";
+import {DUMB} from '../../consts/ai-mode'
+import GameAbout from "../about/component-about";
 import CellStatus from "../../consts/cell-status";
 import CellColor from "../../consts/cell-color";
 import MoveTurn from "../../consts/move-turn";
 import {DEFAULT_COL_COUNT, DEFAULT_ROW_COUNT} from "../../consts/field-dimension.js"
 import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
-import AppActions from "../actions/app-actions";
+import AppActions from "../../actions/app-actions";
+import GameState from "../../consts/game-state";
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
 const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, ACTIVE_PANE_CHANGED} = AppActions;
+const {YOU} = MoveTurn;
+const {CREATED, STARTED} = GameState;
 
 export default class App extends Component {
 
@@ -28,10 +30,10 @@ export default class App extends Component {
 
         game: {
             activePane: GAME,
-            moveTurn: MoveTurn.YOU,
+            moveTurn: YOU,
             winner: null,
-
             colorToFind: BLUE,
+            mode: CREATED,
 
             field: [
                 [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
@@ -79,8 +81,8 @@ export default class App extends Component {
     render() {
         return (
             <div className="App">
-                <Header dispatch={this.dispatch} activePane={this.state.activePane}/>
-                {this.getContent()}
+                <Header dispatch={this.dispatch} activePane={this.state.game.activePane}/>
+                {this._getContent()}
             </div>
         );
     };
@@ -120,6 +122,11 @@ export default class App extends Component {
     /*  ------------------------------------------------- privates ------------------------------------------------- */
 
     _cellClick = (colIndex, rowIndex) => {
+        if (this.state.game.mode !== STARTED) {
+            alert('start the game !!');
+            return
+        }
+
         this.setState((prevState) => {
             const newState = {...prevState};
             switch (newState.game.field[rowIndex][colIndex].status) {
@@ -148,7 +155,7 @@ export default class App extends Component {
 
     };
 
-    getContent = () => {
+    _getContent = () => {
         switch (this.state.game.activePane) {
             case AppPanes.GAME : {
                 return <GameField state={this.state} dispatch={this.dispatch}/>;
@@ -171,18 +178,10 @@ export default class App extends Component {
     _paneChanged = (paneId) => {
         const newState = {...this.state};
         switch (paneId) {
-            case  HeaderButtons.BUTTON_GAME : {
-                newState.game.activePane = AppPanes.GAME;
-                break;
-            }
-
-            case  HeaderButtons.ABOUT_BUTTON : {
-                newState.game.activePane = AppPanes.ABOUT;
-                break;
-            }
-
-            case  HeaderButtons.BUTTON_SETTINGS : {
-                newState.game.activePane = AppPanes.SETTINGS;
+            case  AppPanes.GAME :
+            case  AppPanes.SETTINGS :
+            case  AppPanes.ABOUT : {
+                newState.game.activePane = paneId;
                 break;
             }
 
@@ -220,6 +219,7 @@ export default class App extends Component {
         const newState = {...this.state};
         newState.game = {
             activePane: GAME,
+            mode: STARTED,
             moveTurn: MoveTurn.YOU,
             colorToFind: CellColor.randomColor(),
             field: this._getRandomCells()

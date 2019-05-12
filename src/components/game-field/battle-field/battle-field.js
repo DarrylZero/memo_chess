@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import FieldRow from '../../field-row'
+import FieldRow from '../field-row'
 import './battle-field.css';
 
 export default class BattleField extends Component {

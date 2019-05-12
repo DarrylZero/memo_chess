@@ -1,5 +1,3 @@
-
-
 export default class CellColor {
 
 
@@ -24,13 +22,28 @@ export default class CellColor {
     ];
     static MAX_COLOR_COUNT = this.COLORS.length;
 
+    static _COLOR_STYLE_MAP = {
+        [this.RED]: 'cell_red',
+        [this.ORANGE]: 'cell_orange',
+        [this.YELLOW]: 'cell_yellow',
+        [this.GREEN]: 'cell_green',
+        [this.LIGHT_BLUE]: 'cell_light_blue',
+        [this.BLUE]: 'cell_blue',
+        [this.INDIGO]: 'cell_indigo',
+        [this.BROWN]: 'cell_brown'
+    };
+
     static pickColor = (index) => {
         return this.COLORS[index];
-    }
+    };
+
+    static colorStyle = (color) => {
+        return `cell_${color}`
+    };
 
     static randomColor = () => {
         let color = this.pickColor(Math.round(Math.random() * this.MAX_COLOR_COUNT));
-        while(color === undefined) {
+        while (color === undefined) {
             color = this.pickColor(Math.round(Math.random() * this.MAX_COLOR_COUNT));
         }
         return color;

@@ -3,7 +3,6 @@ export default class MoveTurn {
     static YOU = 'you';
     static OPPONENT = 'opponent';
 
-
     static togglePlayer = (prevPlayer) => {
         switch(prevPlayer) {
             case this.YOU : {
