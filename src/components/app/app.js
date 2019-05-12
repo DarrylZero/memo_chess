@@ -3,8 +3,7 @@ import './app.css';
 import AppPanes from '../../consts/app-panes'
 import Header from '../header'
 import GameSettings from "../game-settings";
-import {HeaderButtons} from '../header/header'
-import {AI_MODE, DUMB} from '../../consts/ai-mode'
+import {DUMB} from '../../consts/ai-mode'
 import GameAbout from "../component-about/component-about";
 import CellStatus from "../../consts/cell-status";
 import CellColor from "../../consts/cell-color";
@@ -18,6 +17,7 @@ const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATU
 const {GAME} = AppPanes;
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
 const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, ACTIVE_PANE_CHANGED} = AppActions;
+const {YOU} = MoveTurn;
 
 export default class App extends Component {
 
@@ -28,9 +28,8 @@ export default class App extends Component {
 
         game: {
             activePane: GAME,
-            moveTurn: MoveTurn.YOU,
+            moveTurn: YOU,
             winner: null,
-
             colorToFind: BLUE,
 
             field: [
@@ -79,8 +78,8 @@ export default class App extends Component {
     render() {
         return (
             <div className="App">
-                <Header dispatch={this.dispatch} activePane={this.state.activePane}/>
-                {this.getContent()}
+                <Header dispatch={this.dispatch} activePane={this.state.game.activePane}/>
+                {this._getContent()}
             </div>
         );
     };
@@ -148,7 +147,7 @@ export default class App extends Component {
 
     };
 
-    getContent = () => {
+    _getContent = () => {
         switch (this.state.game.activePane) {
             case AppPanes.GAME : {
                 return <GameField state={this.state} dispatch={this.dispatch}/>;
@@ -171,18 +170,10 @@ export default class App extends Component {
     _paneChanged = (paneId) => {
         const newState = {...this.state};
         switch (paneId) {
-            case  HeaderButtons.BUTTON_GAME : {
-                newState.game.activePane = AppPanes.GAME;
-                break;
-            }
-
-            case  HeaderButtons.ABOUT_BUTTON : {
-                newState.game.activePane = AppPanes.ABOUT;
-                break;
-            }
-
-            case  HeaderButtons.BUTTON_SETTINGS : {
-                newState.game.activePane = AppPanes.SETTINGS;
+            case  AppPanes.GAME :
+            case  AppPanes.SETTINGS :
+            case  AppPanes.ABOUT : {
+                newState.game.activePane = paneId;
                 break;
             }
 

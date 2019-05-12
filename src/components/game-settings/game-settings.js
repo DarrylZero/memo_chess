@@ -10,9 +10,7 @@ export default class GameSettings extends Component {
         const {aiOptions} = AI_MODE;
         const {dispatch} = this.props;
 
-        const options = aiOptions.map((e) => {
-            return <option key={e.name} value={e.name}> {e.name} </option>
-        });
+        const options = aiOptions.map((e) => <option key={e.name} value={e.name}> {e.name} </option>);
 
         return (
             <div className="settings-ai-level">

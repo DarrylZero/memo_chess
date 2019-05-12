@@ -21,7 +21,7 @@ export default class FieldCell extends Component {
     _getClassName = (status) => {
         switch (status) {
             case CELL_STATUS_REVEALED : {
-                return "quadrant btn btn-info";
+                return "quadrant btn btn-info cell_green";
 
             }
 

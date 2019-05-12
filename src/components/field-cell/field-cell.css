@@ -6,3 +6,45 @@
     border-radius: 5px;
     margin: 2px;
 }
+
+.cell_red {
+    color: #ff0000;
+    background-color: #ff0000;
+}
+
+.cell_orange {
+    color: #ffb412;
+    background-color: #ffb412;
+}
+
+.cell_yellow {
+    color: #ffff00;
+    background-color: #ffff00;
+}
+
+.cell_green {
+    color: #00ff00;
+    background-color: #00ff00;
+}
+
+.cell_light_blue {
+    color: #0cddff;
+    background-color: #0cddff;
+}
+
+.cell_blue {
+    color: #0000ff;
+    background-color: #0000ff;
+}
+
+.cell_indigo {
+    color: #4b0082;
+    background-color: #4b0082;
+}
+
+.cell_brown {
+    color: #800000;
+    background-color: #800000;
+}
+
+
