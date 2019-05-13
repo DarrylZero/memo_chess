@@ -17,7 +17,7 @@ import GameState from "../../consts/game-state";
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
-const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, ACTIVE_PANE_CHANGED} = AppActions;
+const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
 const {YOU} = MoveTurn;
 const {CREATED, STARTED} = GameState;
 
@@ -25,7 +25,8 @@ export default class App extends Component {
 
     state = {
         settings: {
-            aiMode: DUMB
+            aiMode: DUMB,
+            misClickedCellsShowTime: 100
         },
 
         game: {
@@ -83,10 +84,10 @@ export default class App extends Component {
         );
     };
 
-    dispatch = (event) => {
-        switch (event.action) {
+    dispatch = (action) => {
+        switch (action.type) {
             case CELL_CLICKED : {
-                this._cellClick(event.colIndex, event.rowIndex);
+                this._cellClick(action.colIndex, action.rowIndex);
                 return;
             }
 
@@ -97,19 +98,26 @@ export default class App extends Component {
 
             case AI_LEVEL_CHANGED: {
                 const newState = {...this.state};
-                newState.settings.aiMode = event.level;
+                newState.settings.aiMode = action.level;
+                this.setState(newState);
+                return;
+            }
+
+            case MISCLICKED_TIME_CHANGED: {
+                const newState = {...this.state};
+                newState.settings.misClickedCellsShowTime = action.misClickedCellsShowTime;
                 this.setState(newState);
                 return;
             }
 
             case ACTIVE_PANE_CHANGED : {
-                this._paneChanged(event.paneId);
+                this._paneChanged(action.paneId);
                 return;
             }
 
 
             default:
-                throw `unknown event ${event}`;
+                throw `unknown event ${action}`;
         }
 
     };
@@ -131,7 +139,10 @@ export default class App extends Component {
                         newState.game.field[rowIndex][colIndex].status = CELL_STATUS_REVEALED;
                     } else {
                         newState.game.field[rowIndex][colIndex].status = CELL_STATUS_TEMPORARILY_SHOWN;
-                        this.timer.startTimer(this.dropTemporaryShown, 3000, {rowIndex, colIndex});
+                        this.timer.startTimer(this.dropTemporaryShown, this.state.settings.misClickedCellsShowTime, {
+                            rowIndex,
+                            colIndex
+                        });
                     }
                     this._nextColorToFind(newState);
                     break;
