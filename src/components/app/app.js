@@ -64,14 +64,10 @@ export default class App extends Component {
         },
     };
 
-    constructor() {
-        super();
-        this.timer = new Timer();
-    }
+    timer = new Timer();
 
-
-    componentDidMount() {
-        this.timer.init(1000);
+    componentDidMount = () => {
+        this.timer.init(200);
     }
 
     componentWillUnmount() {
