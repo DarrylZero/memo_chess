@@ -1,4 +1,4 @@
-export default class MoveTurn {
+export default class Player {
 
     static YOU = 'you';
     static OPPONENT = 'opponent';
@@ -16,7 +16,6 @@ export default class MoveTurn {
             default : {
                 throw `unknown player ${prevPlayer}`;
             }
-
         }
 
     }

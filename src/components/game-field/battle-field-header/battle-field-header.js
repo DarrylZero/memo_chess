@@ -28,6 +28,13 @@ export default class BattleFieldHeader extends Component {
                         className="btn quadrant btn-success">
                     {caption}
                 </button>
+                <button type="button"
+                        onClick={() => dispatch(AppActions.debugAction('debug_calculate_statistics'))}
+                        className="btn quadrant btn-success">
+                    Debug calculate statistics
+                </button>
+
+
             </div>
         );
     }
