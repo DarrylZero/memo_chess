@@ -6,12 +6,11 @@ export default class BattleField extends Component {
 
 
     render() {
-
         const {state, dispatch} = this.props;
         const field = state.game.field;
         return (
             <div>
-                {this.rows(field)};
+                {this.rows(field)}
             </div>
         );
     }
@@ -30,8 +29,6 @@ export default class BattleField extends Component {
         }
         return rows;
     };
-
-
 
 }
 

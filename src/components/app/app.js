@@ -18,7 +18,7 @@ const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATU
 const {GAME} = AppPanes;
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
 const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
-const {YOU, OPPONENT} = Player;
+const {YOU} = Player;
 const {CREATED, STARTED} = GameState;
 
 export default class App extends Component {
@@ -171,6 +171,7 @@ export default class App extends Component {
                 case CELL_STATUS_CLOSED : {
                     if (newState.game.colorToFind === cell.color) {
                         cell.status = CELL_STATUS_REVEALED;
+                        cell.takenBy = YOU;
                     } else {
                         cell.status = CELL_STATUS_TEMPORARILY_SHOWN;
                         this.timer.startTimer(this.dropTemporaryShown, this.state.settings.misClickedCellsShowTime,
@@ -234,12 +235,6 @@ export default class App extends Component {
     _debugAction = (actionId) => {
         const newState = {...this.state};
         switch (actionId) {
-            case  "debug_calculate_statistics" : {
-                console.log("debug_calculate_statistics");
-
-                this.getStatistics(newState.game.field);
-                break;
-            }
 
             default : {
                 console.log(`action ${actionId} is not known`)
@@ -248,30 +243,6 @@ export default class App extends Component {
         // this.setState(newState);
     };
 
-    getStatistics = (field) => {
-        const map = new Map(); // key = color
-        for (let rowIndex = 0; rowIndex < field.length; rowIndex++) {
-            const row = field[rowIndex];
-            for (let colIndex = 0; colIndex < row.length; colIndex++) {
-                const cell = row[colIndex];
-
-                // status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null
-
-                if (!map.get(cell.color)) {
-                    map.set(cell.color, {[Player.YOU]: 0, [Player.OPPONENT]: 0, hidden: 0, total: 0})
-                }
-                const colorItem = map.get(cell.color);
-                colorItem.total = colorItem.total + 1;
-
-                if (!cell.takenBy) {
-                    colorItem.hidden = colorItem.hidden + 1;
-                } else {
-                    cell[cell.takenBy] = cell[cell.takenBy] + 1;
-                }
-            }
-        }
-        map.toString();
-    };
 
 
 
