@@ -3,11 +3,9 @@ import './app.css';
 import AppPanes from '../../consts/app-panes'
 import Header from '../header'
 import GameSettings from "../game-settings";
-import {DUMB} from '../../consts/ai-mode'
 import GameAbout from "../about/component-about";
 import CellStatus from "../../consts/cell-status";
 import CellColor from "../../consts/cell-color";
-import Player from "../../consts/player";
 import {DEFAULT_COL_COUNT, DEFAULT_ROW_COUNT} from "../../consts/field-dimension.js"
 import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
@@ -16,93 +14,41 @@ import GameState from "../../consts/game-state";
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
-const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
-const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
-const {YOU} = Player;
+const {BLUE} = CellColor;
+const {CELL_CLICKED, RESTART, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
 const {CREATED, STARTED} = GameState;
 
 export default class App extends Component {
 
     state = {
         settings: {
-            aiMode: DUMB,
-            misClickedCellsShowTime: 100
+            misClickedCellsShowTime: 500,
+
+            dimensions : {
+                fieldHeight: DEFAULT_ROW_COUNT,
+                fieldWidth: DEFAULT_COL_COUNT
+            }
         },
+
 
         game: {
             activePane: GAME,
-            moveTurn: YOU,
-            winner: null,
+            winInfo: null,
             colorToFind: BLUE,
             mode: CREATED,
-
             field: [
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
             ]
         },
     };
 
-    timer = new Timer();
+    timer4Clicks = new Timer();
 
     componentDidMount = () => {
-        this.timer.init(200);
-    }
+        this.timer4Clicks.init(200);
+    };
 
     componentWillUnmount() {
-        this.timer.shutdown();
+        this.timer4Clicks.shutdown();
     }
 
     render() {
@@ -123,13 +69,6 @@ export default class App extends Component {
 
             case RESTART : {
                 this._restartGame();
-                return;
-            }
-
-            case AI_LEVEL_CHANGED: {
-                const newState = {...this.state};
-                newState.settings.aiMode = action.level;
-                this.setState(newState);
                 return;
             }
 
@@ -171,10 +110,9 @@ export default class App extends Component {
                 case CELL_STATUS_CLOSED : {
                     if (newState.game.colorToFind === cell.color) {
                         cell.status = CELL_STATUS_REVEALED;
-                        cell.takenBy = YOU;
                     } else {
                         cell.status = CELL_STATUS_TEMPORARILY_SHOWN;
-                        this.timer.startTimer(this.dropTemporaryShown, this.state.settings.misClickedCellsShowTime,
+                        this.timer4Clicks.startTimer(this.dropTemporaryShown, this.state.settings.misClickedCellsShowTime,
                             {rowIndex, colIndex});
                     }
                     this._nextColorToFind(newState);
@@ -275,7 +213,6 @@ export default class App extends Component {
         newState.game = {
             activePane: GAME,
             mode: STARTED,
-            moveTurn: Player.YOU,
             colorToFind: CellColor.randomColor(),
             field: this._getRandomCells()
         };
@@ -284,9 +221,11 @@ export default class App extends Component {
 
     _getRandomCells = () => {
         const rows = [];
-        for (let rowIndex = 0; rowIndex < DEFAULT_ROW_COUNT; rowIndex++) {
+
+
+        for (let rowIndex = 0; rowIndex < this.state.settings.dimensions.fieldHeight; rowIndex++) {
             const aRow = [];
-            for (let colIndex = 0; colIndex < DEFAULT_COL_COUNT; colIndex++) {
+            for (let colIndex = 0; colIndex < this.state.settings.dimensions.fieldWidth; colIndex++) {
                 aRow.push({
                     status: DEFAULT_CELL_STATUS,
                     color: CellColor.randomColor(),
