@@ -7,7 +7,7 @@ import {DUMB} from '../../consts/ai-mode'
 import GameAbout from "../about/component-about";
 import CellStatus from "../../consts/cell-status";
 import CellColor from "../../consts/cell-color";
-import MoveTurn from "../../consts/move-turn";
+import Player from "../../consts/player";
 import {DEFAULT_COL_COUNT, DEFAULT_ROW_COUNT} from "../../consts/field-dimension.js"
 import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
@@ -17,15 +17,16 @@ import GameState from "../../consts/game-state";
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
-const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, ACTIVE_PANE_CHANGED} = AppActions;
-const {YOU} = MoveTurn;
+const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
+const {YOU} = Player;
 const {CREATED, STARTED} = GameState;
 
 export default class App extends Component {
 
     state = {
         settings: {
-            aiMode: DUMB
+            aiMode: DUMB,
+            misClickedCellsShowTime: 100
         },
 
         game: {
@@ -36,30 +37,60 @@ export default class App extends Component {
             mode: CREATED,
 
             field: [
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
                     status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
                     status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
                     status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
                     status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
                     status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE}, {
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
                     status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO}, {status: DEFAULT_CELL_STATUS, color: LIGHT_BLUE}],
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }],
+                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
+                    status: DEFAULT_CELL_STATUS,
+                    color: LIGHT_BLUE,
+                    takenBy: null
+                }],
             ]
         },
     };
@@ -83,10 +114,10 @@ export default class App extends Component {
         );
     };
 
-    dispatch = (event) => {
-        switch (event.action) {
+    dispatch = (action) => {
+        switch (action.type) {
             case CELL_CLICKED : {
-                this._cellClick(event.colIndex, event.rowIndex);
+                this._cellClick(action.colIndex, action.rowIndex);
                 return;
             }
 
@@ -97,19 +128,29 @@ export default class App extends Component {
 
             case AI_LEVEL_CHANGED: {
                 const newState = {...this.state};
-                newState.settings.aiMode = event.level;
+                newState.settings.aiMode = action.level;
+                this.setState(newState);
+                return;
+            }
+
+            case MISCLICKED_TIME_CHANGED: {
+                const newState = {...this.state};
+                newState.settings.misClickedCellsShowTime = action.misClickedCellsShowTime;
                 this.setState(newState);
                 return;
             }
 
             case ACTIVE_PANE_CHANGED : {
-                this._paneChanged(event.paneId);
+                this._paneChanged(action.paneId);
                 return;
             }
 
+            case DEBUG_ACTION : {
+                this._debugAction(action.actionId);
+            }
 
             default:
-                throw `unknown event ${event}`;
+                throw `unknown event ${action}`;
         }
 
     };
@@ -125,13 +166,16 @@ export default class App extends Component {
 
         this.setState((prevState) => {
             const newState = {...prevState};
-            switch (newState.game.field[rowIndex][colIndex].status) {
+            const cell = newState.game.field[rowIndex][colIndex];
+            switch (cell.status) {
                 case CELL_STATUS_CLOSED : {
-                    if (newState.game.colorToFind === newState.game.field[rowIndex][colIndex].color) {
-                        newState.game.field[rowIndex][colIndex].status = CELL_STATUS_REVEALED;
+                    if (newState.game.colorToFind === cell.color) {
+                        cell.status = CELL_STATUS_REVEALED;
+                        cell.takenBy = YOU;
                     } else {
-                        newState.game.field[rowIndex][colIndex].status = CELL_STATUS_TEMPORARILY_SHOWN;
-                        this.timer.startTimer(this.dropTemporaryShown, 3000, {rowIndex, colIndex});
+                        cell.status = CELL_STATUS_TEMPORARILY_SHOWN;
+                        this.timer.startTimer(this.dropTemporaryShown, this.state.settings.misClickedCellsShowTime,
+                            {rowIndex, colIndex});
                     }
                     this._nextColorToFind(newState);
                     break;
@@ -143,7 +187,7 @@ export default class App extends Component {
                 }
 
                 default: {
-                    console.log(`unknown status ${newState.game.field[rowIndex][colIndex].status}`);
+                    console.log(`unknown status ${cell.status}`);
                 }
             }
             return newState;
@@ -188,6 +232,21 @@ export default class App extends Component {
         this.setState(newState);
     };
 
+    _debugAction = (actionId) => {
+        const newState = {...this.state};
+        switch (actionId) {
+
+            default : {
+                console.log(`action ${actionId} is not known`)
+            }
+        }
+        // this.setState(newState);
+    };
+
+
+
+
+
     dropTemporaryShown = (clickedCell) => {
         this.setState((prevState) => {
             const newState = {...prevState};
@@ -216,7 +275,7 @@ export default class App extends Component {
         newState.game = {
             activePane: GAME,
             mode: STARTED,
-            moveTurn: MoveTurn.YOU,
+            moveTurn: Player.YOU,
             colorToFind: CellColor.randomColor(),
             field: this._getRandomCells()
         };
@@ -230,7 +289,8 @@ export default class App extends Component {
             for (let colIndex = 0; colIndex < DEFAULT_COL_COUNT; colIndex++) {
                 aRow.push({
                     status: DEFAULT_CELL_STATUS,
-                    color: CellColor.randomColor()
+                    color: CellColor.randomColor(),
+                    takenBy: null
                 });
             }
             rows.push(aRow);
