@@ -9,7 +9,7 @@ export default class GameField extends Component {
 
     render() {
         const {state, dispatch} = this.props;
-        const gameOver = state.game.winInfo ? <GameOver/> : null;
+        const gameOver = state.game.winInfo.isOver ? <GameOver winInfo={state.game.winInfo}/> : null;
 
         return (
             <div className="game_field">

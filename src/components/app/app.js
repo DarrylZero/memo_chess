@@ -11,12 +11,15 @@ import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
 import AppActions from "../../actions/app-actions";
 import GameState from "../../consts/game-state";
+import {isOver} from "../../datautils/stat-utils";
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {BLUE} = CellColor;
 const {CELL_CLICKED, RESTART, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
 const {CREATED, STARTED} = GameState;
+
+const APPLICATION_STATE_KEY = 'APPLICATION_STATE_KEY';
 
 export default class App extends Component {
 
@@ -33,9 +36,14 @@ export default class App extends Component {
 
         game: {
             activePane: GAME,
-            winInfo: null,
+            winInfo: {
+                startedDateTime: null,
+                finishedDateTime: null,
+                isOver: false
+            },
             colorToFind: BLUE,
             mode: CREATED,
+
             field: [
             ]
         },
@@ -45,10 +53,23 @@ export default class App extends Component {
 
     componentDidMount = () => {
         this.timer4Clicks.init(200);
+        // JSON.parse()
+        const savedStateString = localStorage.getItem(APPLICATION_STATE_KEY);
+        if (savedStateString) {
+            const savedState = JSON.parse(savedStateString);
+            this.setState(savedState);
+        }
+
+        window.onbeforeunload = () => {
+            localStorage.setItem(APPLICATION_STATE_KEY, JSON.stringify(this.state));
+            return "Are you sure you want to leave this page?";
+        }
     };
 
     componentWillUnmount() {
         this.timer4Clicks.shutdown();
+        window.onbeforeunload = null;
+        localStorage.setItem(APPLICATION_STATE_KEY, JSON.stringify(this.state));
     }
 
     render() {
@@ -110,6 +131,9 @@ export default class App extends Component {
                 case CELL_STATUS_CLOSED : {
                     if (newState.game.colorToFind === cell.color) {
                         cell.status = CELL_STATUS_REVEALED;
+                        const gameOver = newState.game.winInfo.isOver || isOver(newState.game.field);
+                        newState.game.winInfo.isOver = gameOver;
+                        newState.game.winInfo.finishedDateTime = gameOver ? new Date() : null;
                     } else {
                         cell.status = CELL_STATUS_TEMPORARILY_SHOWN;
                         this.timer4Clicks.startTimer(this.dropTemporaryShown, this.state.settings.misClickedCellsShowTime,
@@ -181,10 +205,6 @@ export default class App extends Component {
         // this.setState(newState);
     };
 
-
-
-
-
     dropTemporaryShown = (clickedCell) => {
         this.setState((prevState) => {
             const newState = {...prevState};
@@ -213,6 +233,11 @@ export default class App extends Component {
         newState.game = {
             activePane: GAME,
             mode: STARTED,
+            winInfo: {
+                startedDateTime: new Date(),
+                finishedDateTime: null,
+                isOver: false
+            },
             colorToFind: CellColor.randomColor(),
             field: this._getRandomCells()
         };
