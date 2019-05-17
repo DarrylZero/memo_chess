@@ -17,6 +17,7 @@ export default class Timer {
 
     init(timeout) {
         this.interval = setInterval(() => this.onTimer(), timeout);
+        return this;
     }
 
     shutdown() {
