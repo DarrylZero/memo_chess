@@ -18,8 +18,6 @@ export default class BattleFieldHeader extends Component {
 
         return (
             <div className ="battle-field-header">
-                <label className="next_move_class">{"next move is by " + state.game.moveTurn.toUpperCase()}</label>
-
                 <button type="button" className={style}>{buttonColorToFindCaption}</button>
 
 

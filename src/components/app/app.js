@@ -20,6 +20,7 @@ const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
 const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
 const {YOU} = Player;
 const {CREATED, STARTED} = GameState;
+const APPLICATION_STATE_KEY = 'APPLICATION_STATE_KEY';
 
 export default class App extends Component {
 
@@ -99,7 +100,17 @@ export default class App extends Component {
 
     componentDidMount = () => {
         this.timer.init(200);
-    }
+        const savedStateString = localStorage.getItem(APPLICATION_STATE_KEY);
+        if (savedStateString) {
+            const savedState = JSON.parse(savedStateString);
+            this.setState(savedState);
+        }
+
+        window.onbeforeunload = () => {
+            localStorage.setItem(APPLICATION_STATE_KEY, JSON.stringify(this.state));
+            return "Are you sure you want to leave this page?";
+        }
+    };
 
     componentWillUnmount() {
         this.timer.shutdown();
