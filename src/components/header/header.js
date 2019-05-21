@@ -16,8 +16,6 @@ export default class Header extends Component {
 
     render() {
         const {activePane, dispatch} = this.props;
-        console.log(this.getButtonStyle(activePane, GAME));
-
         return (
             <div>
                 <button

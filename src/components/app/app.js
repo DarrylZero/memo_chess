@@ -3,23 +3,21 @@ import './app.css';
 import AppPanes from '../../consts/app-panes'
 import Header from '../header'
 import GameSettings from "../game-settings";
-import {DUMB} from '../../consts/ai-mode'
 import GameAbout from "../about/component-about";
 import CellStatus from "../../consts/cell-status";
 import CellColor from "../../consts/cell-color";
-import Player from "../../consts/player";
 import {DEFAULT_COL_COUNT, DEFAULT_ROW_COUNT} from "../../consts/field-dimension.js"
 import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
 import AppActions from "../../actions/app-actions";
 import GameState from "../../consts/game-state";
 import SuggestionsService from '../service-remote/suggestions-service'
+import {isOver} from "../../datautils/stat-utils";
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
-const {INDIGO, LIGHT_BLUE, BLUE} = CellColor;
-const {CELL_CLICKED, RESTART, AI_LEVEL_CHANGED, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
-const {YOU} = Player;
+const {BLUE} = CellColor;
+const {CELL_CLICKED, RESTART, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
 const {CREATED, STARTED} = GameState;
 const APPLICATION_STATE_KEY = 'APPLICATION_STATE_KEY';
 
@@ -27,14 +25,22 @@ export default class App extends Component {
 
     state = {
         settings: {
-            aiMode: DUMB,
-            misClickedCellsShowTime: 100
+            misClickedCellsShowTime: 500,
+
+            dimensions : {
+                fieldHeight: DEFAULT_ROW_COUNT,
+                fieldWidth: DEFAULT_COL_COUNT
+            }
         },
+
 
         game: {
             activePane: GAME,
-            moveTurn: YOU,
-            winner: null,
+            winInfo: {
+                startedDateTime: null,
+                finishedDateTime: null,
+                isOver: false
+            },
             colorToFind: BLUE,
             mode: CREATED,
 
@@ -43,10 +49,10 @@ export default class App extends Component {
         },
     };
 
-    timer = new Timer();
+    timer4Clicks = new Timer();
 
     componentDidMount = () => {
-        this.timer.init(200);
+        this.timer4Clicks.init(200);
         const savedStateString = localStorage.getItem(APPLICATION_STATE_KEY);
         if (savedStateString) {
             const savedState = JSON.parse(savedStateString);
@@ -60,7 +66,9 @@ export default class App extends Component {
     };
 
     componentWillUnmount() {
-        this.timer.shutdown();
+        this.timer4Clicks.shutdown();
+        window.onbeforeunload = null;
+        localStorage.setItem(APPLICATION_STATE_KEY, JSON.stringify(this.state));
     }
 
     render() {
@@ -81,13 +89,6 @@ export default class App extends Component {
 
             case RESTART : {
                 this._restartGame();
-                return;
-            }
-
-            case AI_LEVEL_CHANGED: {
-                const newState = {...this.state};
-                newState.settings.aiMode = action.level;
-                this.setState(newState);
                 return;
             }
 
@@ -129,10 +130,12 @@ export default class App extends Component {
                 case CELL_STATUS_CLOSED : {
                     if (newState.game.colorToFind === cell.color) {
                         cell.status = CELL_STATUS_REVEALED;
-                        cell.takenBy = YOU;
+                        const gameOver = newState.game.winInfo.isOver || isOver(newState.game.field);
+                        newState.game.winInfo.isOver = gameOver;
+                        newState.game.winInfo.finishedDateTime = gameOver ? new Date() : null;
                     } else {
                         cell.status = CELL_STATUS_TEMPORARILY_SHOWN;
-                        this.timer.startTimer(this.dropTemporaryShown, this.state.settings.misClickedCellsShowTime,
+                        this.timer4Clicks.startTimer(this.dropTemporaryShown, this.state.settings.misClickedCellsShowTime,
                             {rowIndex, colIndex});
                     }
                     this._nextColorToFind(newState);
@@ -207,10 +210,6 @@ export default class App extends Component {
         // this.setState(newState);
     };
 
-
-
-
-
     dropTemporaryShown = (clickedCell) => {
         this.setState((prevState) => {
             const newState = {...prevState};
@@ -239,7 +238,11 @@ export default class App extends Component {
         newState.game = {
             activePane: GAME,
             mode: STARTED,
-            moveTurn: Player.YOU,
+            winInfo: {
+                startedDateTime: new Date(),
+                finishedDateTime: null,
+                isOver: false
+            },
             colorToFind: CellColor.randomColor(),
             field: this._getRandomCells()
         };
@@ -248,9 +251,11 @@ export default class App extends Component {
 
     _getRandomCells = () => {
         const rows = [];
-        for (let rowIndex = 0; rowIndex < DEFAULT_ROW_COUNT; rowIndex++) {
+
+
+        for (let rowIndex = 0; rowIndex < this.state.settings.dimensions.fieldHeight; rowIndex++) {
             const aRow = [];
-            for (let colIndex = 0; colIndex < DEFAULT_COL_COUNT; colIndex++) {
+            for (let colIndex = 0; colIndex < this.state.settings.dimensions.fieldWidth; colIndex++) {
                 aRow.push({
                     status: DEFAULT_CELL_STATUS,
                     color: CellColor.randomColor(),
