@@ -13,6 +13,7 @@ import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
 import AppActions from "../../actions/app-actions";
 import GameState from "../../consts/game-state";
+import SuggestionsService from '../service-remote/suggestions-service'
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
@@ -38,60 +39,6 @@ export default class App extends Component {
             mode: CREATED,
 
             field: [
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
-                [{status: DEFAULT_CELL_STATUS, color: BLUE, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }, {status: DEFAULT_CELL_STATUS, color: INDIGO, takenBy: null}, {
-                    status: DEFAULT_CELL_STATUS,
-                    color: LIGHT_BLUE,
-                    takenBy: null
-                }],
             ]
         },
     };
@@ -216,6 +163,11 @@ export default class App extends Component {
                 return <GameSettings settings={this.state.settings} dispatch={this.dispatch}/>;
             }
 
+            case AppPanes.SUGGESTION: {
+                return <SuggestionsService settings={this.state.settings} />;
+            }
+
+
             case AppPanes.ABOUT : {
                 return <GameAbout state={this.state} dispatch={this.dispatch}/>;
             }
@@ -231,6 +183,7 @@ export default class App extends Component {
         switch (paneId) {
             case  AppPanes.GAME :
             case  AppPanes.SETTINGS :
+            case  AppPanes.SUGGESTION :
             case  AppPanes.ABOUT : {
                 newState.game.activePane = paneId;
                 break;
