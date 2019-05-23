@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import './suggestions-service.css'
-import SuggestionItem from './suggestion-item'
 import SuggestionGroup from "./suggestion-group";
 
 export default class SuggestionsService extends Component {
@@ -9,9 +8,8 @@ export default class SuggestionsService extends Component {
     suggestionsPath = 'suggestions/suggest';
 
 
-
     state = {
-        number:'21',
+        number: '21',
         data: {
             "number": "2128506",
             "suggestions": []
@@ -27,15 +25,17 @@ export default class SuggestionsService extends Component {
                     <input type="text"
                            ref={(input) => this.input = input}
                            onChange={(e) => {
-                               this.setState({number: e.target.value})
+                               const newState = {number: e.target.value};
+                               this.setState(newState)
                            }}
+                           value={this.state.number}
                     />
                 </label>
                 <input type="submit" value="suggest"/>
 
-                 <br/>
+                {/*<br/>*/}
 
-                {this.state.data.suggestions.map(suggestion => <SuggestionGroup suggestion={suggestion} />)}
+                {this.state.data.suggestions.map(suggestion => <SuggestionGroup suggestion={suggestion}/>)}
 
 
             </form>
@@ -45,7 +45,8 @@ export default class SuggestionsService extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
         console.log('handleSubmit ');
-        const fullUri = `${this.serviceUrl}/${this.suggestionsPath}/2128506`;
+
+        const fullUri = `${this.serviceUrl}/${this.suggestionsPath}/${this.state.number}}`;
 
         fetch(fullUri)
             .then(response => {
