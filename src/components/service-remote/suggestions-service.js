@@ -9,7 +9,7 @@ export default class SuggestionsService extends Component {
 
 
     state = {
-        number: '21',
+        number: '1234',
         data: {
             "number": "2128506",
             "suggestions": []
@@ -19,24 +19,27 @@ export default class SuggestionsService extends Component {
     render() {
 
         return (
-            <form onSubmit={this.handleSubmit}>
+            <form className="suggestions-service" onSubmit={this.handleSubmit}>
                 <label>
-                    enter the number :
-                    <input type="text"
-                           ref={(input) => this.input = input}
-                           onChange={(e) => {
-                               const newState = {number: e.target.value};
-                               this.setState(newState)
-                           }}
-                           value={this.state.number}
+                    <input
+                        type="text"
+                        ref={(input) => this.input = input}
+                        onChange={(e) => {
+                            const newState = {number: e.target.value};
+                            this.setState(newState)
+                        }}
+                        value={this.state.number}
                     />
                 </label>
-                <input type="submit" value="suggest"/>
-
-                {/*<br/>*/}
-
-                {this.state.data.suggestions.map(suggestion => <SuggestionGroup suggestion={suggestion}/>)}
-
+                <input
+                    className="suggestions-service-button"
+                    type="submit"
+                    value="suggest"/>
+                <br/>
+                {
+                    this.state.data.suggestions.map(suggestion =>
+                        <SuggestionGroup suggestion={suggestion}/>)
+                }
 
             </form>
         );
@@ -46,7 +49,7 @@ export default class SuggestionsService extends Component {
         e.preventDefault();
         console.log('handleSubmit ');
 
-        const fullUri = `${this.serviceUrl}/${this.suggestionsPath}/${this.state.number}}`;
+        const fullUri = `${this.serviceUrl}/${this.suggestionsPath}/${this.state.number}`;
 
         fetch(fullUri)
             .then(response => {
