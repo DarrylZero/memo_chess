@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import './suggestions-service.css'
 import SuggestionGroup from "./suggestion-group";
 
+const SUGGESTER = 'SUGGESTER';
 export default class SuggestionsService extends Component {
 
     serviceUrl = 'http://127.0.0.1:53432/memorizador';
@@ -13,13 +14,14 @@ export default class SuggestionsService extends Component {
         data: {
             "number": "2128506",
             "suggestions": []
-        }
+        },
+        sentence: ''
     };
 
     render() {
-
         return (
-            <form className="suggestions-service" onSubmit={this.handleSubmit}>
+            <form className="suggestions-service"
+                  onSubmit={this.handleSubmit}>
                 <label>
                     <input
                         type="text"
@@ -45,10 +47,26 @@ export default class SuggestionsService extends Component {
         );
     }
 
+    componentDidMount = () => {
+        const savedStateString = localStorage.getItem(SUGGESTER);
+        if (savedStateString) {
+            const savedState = JSON.parse(savedStateString);
+            this.setState(savedState);
+        }
+
+        window.onbeforeunload = () => {
+            localStorage.setItem(SUGGESTER, JSON.stringify(this.state.data));
+        }
+    };
+
+    componentWillUnmount() {
+        window.onbeforeunload = null;
+        localStorage.setItem(SUGGESTER, JSON.stringify(this.state.data));
+    }
+
+
     handleSubmit = (e) => {
         e.preventDefault();
-        console.log('handleSubmit ');
-
         const fullUri = `${this.serviceUrl}/${this.suggestionsPath}/${this.state.number}`;
 
         fetch(fullUri)

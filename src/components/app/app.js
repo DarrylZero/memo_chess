@@ -61,7 +61,6 @@ export default class App extends Component {
 
         window.onbeforeunload = () => {
             localStorage.setItem(APPLICATION_STATE_KEY, JSON.stringify(this.state));
-            return "Are you sure you want to leave this page?";
         }
     };
 
