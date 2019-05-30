@@ -6,13 +6,16 @@ export default class SuggestionGroup extends Component {
 
     render() {
         const {suggestion} = this.props;
+        const formId = `suggestion_group_${Math.floor(Math.random() * 100000000)}`;
+
         return (
-            <Fragment>
+            <div id={formId}>
                 <button className="btn suggestion_item_button" onClick={() => {
-                    this._s();
+                    this._s(formId);
                 }}/>
 
-                {suggestion.suggestion.map(words => {
+                {
+                    suggestion.suggestion.map(words => {
                     return (
                         <Fragment>
                             <select className="suggestion_item">
@@ -22,14 +25,16 @@ export default class SuggestionGroup extends Component {
                     )
                 })}
                 <br/>
-            </Fragment>);
+            </div>);
     }
 
 
-    _s = () => {
-        document.body.childNodes.forEach(e => {
-            console.log(e);
-        });
+    _s = (formId) => {
+
+        const elementById = document.getElementById(formId);
+        console.log(formId);
+        console.log(elementById);
+
 
     }
 

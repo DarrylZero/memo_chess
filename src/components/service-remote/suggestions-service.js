@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import './suggestions-service.css'
 import SuggestionGroup from "./suggestion-group";
+import SuggestionSentence from "./suggestion-sentence";
 
 const SUGGESTER = 'SUGGESTER';
 export default class SuggestionsService extends Component {
@@ -12,10 +13,11 @@ export default class SuggestionsService extends Component {
     state = {
         number: '1234',
         data: {
-            "number": "2128506",
-            "suggestions": []
+            number: "2128506",
+            suggestions: [],
         },
-        sentence: ''
+        error: null,
+        sentence: null
     };
 
     render() {
@@ -38,10 +40,16 @@ export default class SuggestionsService extends Component {
                     type="submit"
                     value="suggest"/>
                 <br/>
+
                 {
-                    this.state.data.suggestions.map(suggestion =>
-                        <SuggestionGroup suggestion={suggestion}/>)
+                    this.state.error ?
+                        <h2> {this.state.error} </h2> :
+                        this.state.data.suggestions.map(suggestion => {
+                                return <SuggestionGroup suggestion={suggestion}/>
+                            }
+                        )
                 }
+                <SuggestionSentence sentence={this.state.sentence}/>
 
             </form>
         );
@@ -75,11 +83,14 @@ export default class SuggestionsService extends Component {
             })
             .then(data => {
                 this.setState({
+                    error: null,
                     data: data
                 })
             })
             .catch((e) => {
-                console.log(`rejected  ${e} `);
+                this.setState({
+                    error: e.message
+                })
             });
     }
 
