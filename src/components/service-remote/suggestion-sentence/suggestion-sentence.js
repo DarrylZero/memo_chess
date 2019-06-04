@@ -21,13 +21,13 @@ export default class SuggestionSentence extends Component {
             return null;
         }
 
-        const {sentence, number, onSentence} = this.props;
+        const {sentence, number, onSentence, checkSentence} = this.props;
         const buttonStyle = `quadrant btn ${CellColor.colorStyle(CellColor.GREEN)}`;
 
         return (
             <div>
                 <button type="button" className={buttonStyle} onClick={() => {
-                    this.checkSentence(sentence, number);
+                    checkSentence(sentence, number);
                 }}/>
                 <br/>
                 <input
@@ -36,15 +36,9 @@ export default class SuggestionSentence extends Component {
                     value={sentence}
                     onChange={(e) => {
                         onSentence(e.target.value);
-                        this.checkSentence(e.target.value, number);
+                        checkSentence(e.target.value, number);
                     }}/>
 
             </div>);
     }
-
-    checkSentence = (sentence, number) => {
-        console.log(`on change sentence[${sentence}] number[${number}]`);
-    }
-
-
 }

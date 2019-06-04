@@ -62,6 +62,7 @@ export default class SuggestionsService extends Component {
                             sentence: sentence
                         })
                     }}
+                    checkSentence={this.checkSentence}
                     number={this.state.data.number}/>
 
             </form>
@@ -105,6 +106,10 @@ export default class SuggestionsService extends Component {
                     error: e.message
                 })
             });
-    }
+    };
+
+    checkSentence = (sentence, number) => {
+        console.log(`on change sentence[${sentence}] number[${number}]`);
+    };
 
 }
