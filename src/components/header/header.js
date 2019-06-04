@@ -6,7 +6,7 @@ import AppPanes from "../../consts/app-panes";
 /**
  * https://getbootstrap.com/docs/4.0/components/buttons/
  */
-const {ABOUT, GAME, SETTINGS} = AppPanes;
+const {ABOUT, GAME, SUGGESTION, SETTINGS} = AppPanes;
 export default class Header extends Component {
 
 
@@ -27,6 +27,11 @@ export default class Header extends Component {
                     type="button"
                     className={this.getButtonStyle(activePane, SETTINGS)}
                     onClick={() => dispatch(AppActions.activePaneChanged(SETTINGS))}>settings
+                </button>
+                <button
+                    type="button"
+                    className={this.getButtonStyle(activePane, SUGGESTION)}
+                    onClick={() => dispatch(AppActions.activePaneChanged(SUGGESTION))}>suggestions
                 </button>
                 <button
                     type="button"

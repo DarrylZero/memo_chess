@@ -11,6 +11,7 @@ import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
 import AppActions from "../../actions/app-actions";
 import GameState from "../../consts/game-state";
+import SuggestionsService from '../service-remote/suggestions-service'
 import {isOver} from "../../datautils/stat-utils";
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
@@ -18,7 +19,6 @@ const {GAME} = AppPanes;
 const {BLUE} = CellColor;
 const {CELL_CLICKED, RESTART, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
 const {CREATED, STARTED} = GameState;
-
 const APPLICATION_STATE_KEY = 'APPLICATION_STATE_KEY';
 
 export default class App extends Component {
@@ -53,7 +53,6 @@ export default class App extends Component {
 
     componentDidMount = () => {
         this.timer4Clicks.init(200);
-        // JSON.parse()
         const savedStateString = localStorage.getItem(APPLICATION_STATE_KEY);
         if (savedStateString) {
             const savedState = JSON.parse(savedStateString);
@@ -62,7 +61,6 @@ export default class App extends Component {
 
         window.onbeforeunload = () => {
             localStorage.setItem(APPLICATION_STATE_KEY, JSON.stringify(this.state));
-            return "Are you sure you want to leave this page?";
         }
     };
 
@@ -167,6 +165,11 @@ export default class App extends Component {
                 return <GameSettings settings={this.state.settings} dispatch={this.dispatch}/>;
             }
 
+            case AppPanes.SUGGESTION: {
+                return <SuggestionsService settings={this.state.settings} />;
+            }
+
+
             case AppPanes.ABOUT : {
                 return <GameAbout state={this.state} dispatch={this.dispatch}/>;
             }
@@ -182,6 +185,7 @@ export default class App extends Component {
         switch (paneId) {
             case  AppPanes.GAME :
             case  AppPanes.SETTINGS :
+            case  AppPanes.SUGGESTION :
             case  AppPanes.ABOUT : {
                 newState.game.activePane = paneId;
                 break;

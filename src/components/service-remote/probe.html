@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+
+<script>
+    function handleSubmit(e) {
+        unirest.get("http://127.0.0.1:53432/memorizador/suggestions/suggest/000121112")
+        // .header("X-RapidAPI-Host", "matchilling-chuck-norris-jokes-v1.p.rapidapi.com")
+        // .header("X-RapidAPI-Key", "9d676e1c58mshbf912c7d9227473p10963cjsn771a4dce622c")
+            .header("accept", "application/json")
+            .end(function (result) {
+                console.log(result.status, result.headers, result.body);
+            });
+    }
+
+</script>
+
+<form onSubmit={this.handleSubmit}>
+    <label>
+        enter the number :
+        <input type="text"/>
+    </label>
+    <input type="submit" value="suggest"/>
+</form>
+
+
+</html>
