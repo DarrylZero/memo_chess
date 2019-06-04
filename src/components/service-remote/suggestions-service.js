@@ -11,7 +11,6 @@ export default class SuggestionsService extends Component {
 
 
     state = {
-        number: '1234',
         data: {
             number: "2128506",
             suggestions: [],
@@ -45,11 +44,25 @@ export default class SuggestionsService extends Component {
                     this.state.error ?
                         <h2> {this.state.error} </h2> :
                         this.state.data.suggestions.map(suggestion => {
-                                return <SuggestionGroup suggestion={suggestion}/>
+                                return <SuggestionGroup
+                                    suggestion={suggestion}
+                                    onSentence={(sentence) => {
+                                        console.log(`sentence = ${sentence}`);
+                                        this.setState({
+                                            sentence: sentence
+                                        });
+                                    }}/>
                             }
                         )
                 }
-                <SuggestionSentence sentence={this.state.sentence}/>
+                <SuggestionSentence
+                    sentence={this.state.sentence}
+                    onSentence={(sentence) => {
+                        this.setState({
+                            sentence: sentence
+                        })
+                    }}
+                    number={this.state.data.number}/>
 
             </form>
         );
