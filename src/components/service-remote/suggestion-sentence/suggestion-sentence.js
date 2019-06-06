@@ -8,10 +8,6 @@ export default class SuggestionSentence extends Component {
     serviceUrl = 'http://127.0.0.1:53432/memorizador';
     suggestionsPath = 'suggestions/suggest';
 
-    state = {
-        isAllowed: false
-    };
-
     render() {
 
         if (!this.props.sentence) {
@@ -21,8 +17,9 @@ export default class SuggestionSentence extends Component {
             return null;
         }
 
-        const {sentence, number, onSentence, checkSentence} = this.props;
-        const buttonStyle = `quadrant btn ${CellColor.colorStyle(CellColor.GREEN)}`;
+        const {sentence, number, onSentence, checkSentence, isCorrect} = this.props;
+        const color = isCorrect ? CellColor.GREEN : CellColor.RED;
+        const buttonStyle = `quadrant btn ${CellColor.colorStyle(color)}`;
 
         return (
             <div>

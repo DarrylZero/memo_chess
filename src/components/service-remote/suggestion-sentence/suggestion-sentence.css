@@ -1,4 +1,6 @@
 .sentence_input {
-    width: 6500px;
+    text-anchor: start;
+    offset-anchor: auto;
+    width: 650px;
 
 }
