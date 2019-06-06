@@ -8,10 +8,6 @@ export default class SuggestionSentence extends Component {
     serviceUrl = 'http://127.0.0.1:53432/memorizador';
     suggestionsPath = 'suggestions/suggest';
 
-    state = {
-        isAllowed: false
-    };
-
     render() {
 
         if (!this.props.sentence) {
@@ -21,13 +17,14 @@ export default class SuggestionSentence extends Component {
             return null;
         }
 
-        const {sentence, number, onSentence} = this.props;
-        const buttonStyle = `quadrant btn ${CellColor.colorStyle(CellColor.GREEN)}`;
+        const {sentence, number, onSentence, checkSentence, isCorrect} = this.props;
+        const color = isCorrect ? CellColor.GREEN : CellColor.RED;
+        const buttonStyle = `quadrant btn ${CellColor.colorStyle(color)}`;
 
         return (
             <div>
                 <button type="button" className={buttonStyle} onClick={() => {
-                    this.checkSentence(sentence, number);
+                    checkSentence(sentence, number);
                 }}/>
                 <br/>
                 <input
@@ -36,15 +33,9 @@ export default class SuggestionSentence extends Component {
                     value={sentence}
                     onChange={(e) => {
                         onSentence(e.target.value);
-                        this.checkSentence(e.target.value, number);
+                        checkSentence(e.target.value, number);
                     }}/>
 
             </div>);
     }
-
-    checkSentence = (sentence, number) => {
-        console.log(`on change sentence[${sentence}] number[${number}]`);
-    }
-
-
 }

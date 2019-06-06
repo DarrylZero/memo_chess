@@ -8,6 +8,7 @@ export default class SuggestionsService extends Component {
 
     serviceUrl = 'http://127.0.0.1:53432/memorizador';
     suggestionsPath = 'suggestions/suggest';
+    checkPath = 'suggestions/check';
 
 
     state = {
@@ -16,7 +17,8 @@ export default class SuggestionsService extends Component {
             suggestions: [],
         },
         error: null,
-        sentence: null
+        sentence: null,
+        isCorrect: true
     };
 
     render() {
@@ -62,7 +64,10 @@ export default class SuggestionsService extends Component {
                             sentence: sentence
                         })
                     }}
-                    number={this.state.data.number}/>
+                    checkSentence={this.checkSentence}
+                    number={this.state.data.number}
+                    isCorrect={this.state.isCorrect}
+                />
 
             </form>
         );
@@ -105,6 +110,38 @@ export default class SuggestionsService extends Component {
                     error: e.message
                 })
             });
-    }
+    };
+
+    checkSentence = (sentence, number) => {
+        const fullUri = `${this.serviceUrl}/${this.checkPath}`;
+        console.log(`on change sentence[${sentence}] number[${number}]`);
+        console.log(`fullUri => ${fullUri}]`);
+
+        fetch(fullUri, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, cors, *same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                sentence: sentence,
+                number: number
+            })
+        })
+            .then(data => data.json())
+            .then(data => {
+                this.setState({
+                    error: null,
+                    isCorrect: data.result
+                })
+            })
+            .catch((e) => {
+                this.setState({
+                    error: e.message
+                })
+            });
+    };
 
 }
