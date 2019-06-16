@@ -10,5 +10,8 @@
 .settings_property_value {
     margin-left: 30px;
     /*width: 50px;*/
+}
 
+.settings_dropdown {
+    width: 200px;
 }
