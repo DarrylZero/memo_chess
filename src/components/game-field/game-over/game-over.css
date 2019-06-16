@@ -1,0 +1,10 @@
+.cc {
+    align-self: auto;
+}
+
+.input_value {
+    text-align: left;
+    vertical-align: auto;
+    height: inherit;
+    alignment: inherit;
+}
