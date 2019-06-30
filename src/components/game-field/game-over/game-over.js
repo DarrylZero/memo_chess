@@ -9,10 +9,15 @@ export default class GameOver extends Component {
 
         return (
             <Fragment>
-                <h1>Game is over. You win!! </h1>
-                <h2> started ${startedDateTime} </h2>
-                <h2> finished ${finishedDateTime} </h2>
+                <h1>Game is over.</h1>
+                <h2> started {this.formatDate(startedDateTime)} </h2>
+                <h2> finished {this.formatDate(finishedDateTime)} </h2>
             </Fragment>
         );
     }
+
+    formatDate = (date) => {
+        return date.toLocaleString();
+    }
+
 }

@@ -17,8 +17,12 @@ import {isOver} from "../../datautils/stat-utils";
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {BLUE} = CellColor;
-const {CELL_CLICKED, RESTART, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED} = AppActions;
+const {CELL_CLICKED, RESTART, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED,
+    HEIGHT_CHANGED, WIDTH_CHANGED} = AppActions;
+
+
 const {CREATED, STARTED} = GameState;
+
 const APPLICATION_STATE_KEY = 'APPLICATION_STATE_KEY';
 
 export default class App extends Component {
@@ -91,13 +95,6 @@ export default class App extends Component {
                 return;
             }
 
-            case MISCLICKED_TIME_CHANGED: {
-                const newState = {...this.state};
-                newState.settings.misClickedCellsShowTime = action.misClickedCellsShowTime;
-                this.setState(newState);
-                return;
-            }
-
             case ACTIVE_PANE_CHANGED : {
                 this._paneChanged(action.paneId);
                 return;
@@ -105,6 +102,28 @@ export default class App extends Component {
 
             case DEBUG_ACTION : {
                 this._debugAction(action.actionId);
+            }
+
+
+            case MISCLICKED_TIME_CHANGED: {
+                const newState = {...this.state};
+                newState.settings.misClickedCellsShowTime = action.misClickedCellsShowTime;
+                this.setState(newState);
+                return;
+            }
+
+            case HEIGHT_CHANGED : {
+                const newState = {...this.state};
+                newState.settings.dimensions.fieldHeight = action.value;
+                this.setState(newState);
+                return;
+            }
+
+            case WIDTH_CHANGED: {
+                const newState = {...this.state};
+                newState.settings.dimensions.fieldWidth = action.value;
+                this.setState(newState);
+                return;
             }
 
             default:
@@ -162,7 +181,10 @@ export default class App extends Component {
             }
 
             case AppPanes.SETTINGS: {
-                return <GameSettings settings={this.state.settings} dispatch={this.dispatch}/>;
+                return <GameSettings
+                    settings={this.state.settings}
+                    dispatch={this.dispatch}
+                />;
             }
 
             case AppPanes.SUGGESTION: {
