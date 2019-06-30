@@ -150,7 +150,7 @@ export default class App extends Component {
                         cell.status = CELL_STATUS_REVEALED;
                         const gameOver = newState.game.winInfo.isOver || isOver(newState.game.field);
                         newState.game.winInfo.isOver = gameOver;
-                        newState.game.winInfo.finishedDateTime = gameOver ? new Date() : null;
+                        newState.game.winInfo.finishedDateTime = gameOver ? new Date().toLocaleString() : null;
                     } else {
                         cell.status = CELL_STATUS_TEMPORARILY_SHOWN;
                         this.timer4Clicks.startTimer(this.dropTemporaryShown, this.state.settings.misClickedCellsShowTime,
@@ -260,7 +260,7 @@ export default class App extends Component {
             activePane: GAME,
             mode: STARTED,
             winInfo: {
-                startedDateTime: new Date(),
+                startedDateTime: new Date().toLocaleString(),
                 finishedDateTime: null,
                 isOver: false
             },
