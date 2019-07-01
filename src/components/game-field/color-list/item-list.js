@@ -22,13 +22,11 @@ export default class ItemList extends Component {
 
         return (
             <div className="color_list">
-                <ol>
-                    <table width="300" border="2">
-                        <tr><th>Color</th><th>Total</th><th>Open</th></tr>
-                        {items}
-                        <tr><th/><th>{statistics.totals.total}</th><th>{statistics.totals.open}</th></tr>
-                    </table>
-                </ol>
+                <table width="300" border="2">
+                    <tr><th>Color</th><th>Total</th><th>Open</th></tr>
+                    {items}
+                    <tr><th/><th>{statistics.totals.total}</th><th>{statistics.totals.open}</th></tr>
+                </table>
             </div>
         );
     }
