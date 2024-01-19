@@ -23,7 +23,7 @@ export default class GameSettings extends Component {
                         <td>
                             <select className='settings_dropdown'
                                     value={misClickedCellsShowTime}
-                                    onChange={(e) => dispatch(AppActions.misclickedTimeChanged(Number(e.target.value)))}>
+                                    onChange={(e) => dispatch(AppActions.misClickedTimeChanged(Number(e.target.value)))}>
                                 <option>100</option>
                                 <option>300</option>
                                 <option>500</option>
