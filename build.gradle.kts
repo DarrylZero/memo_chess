@@ -2,11 +2,17 @@ import com.bmuschko.gradle.docker.tasks.image.*
 
 plugins {
     id("com.github.node-gradle.node") version "7.0.1"
-    id("com.bmuschko.docker-remote-api") version "9.4.0"
 }
 
-task<Delete>("clear") {
+task<Delete>("clean") {
     setDelete("build")
+    isFollowSymlinks = false
+}.apply {
+    group = "build"
+}
+
+task<Delete>("clean_node_modules") {
+    setDelete("node_modules")
     isFollowSymlinks = false
 }.apply {
     group = "build"
@@ -17,12 +23,4 @@ task<Exec>("build") {
 }.apply {
     group = "build"
     dependsOn("npmInstall")
-}
-
-
-tasks.create("buildImage", DockerBuildImage::class) {
-    inputDir.set(file("build"))
-    dockerFile.set(file("Dockerfile"))
-}.apply {
-    group = "build"
 }

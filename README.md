@@ -69,7 +69,10 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 
 
 
-to Start demo backend 
+to Start demo backend
+
+### Additions
+docker run -p 4322:4322 -it  mem-chess/ubuntu
 
 
-http:/localhost:53432/memorizador/suggestions/suggest/2128506
+

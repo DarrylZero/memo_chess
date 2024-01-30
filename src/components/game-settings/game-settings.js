@@ -41,9 +41,11 @@ export default class GameSettings extends Component {
                                     value={dimensions.fieldHeight}
                                     onChange={(e) => dispatch(AppActions.heightChanged(Number(e.target.value)))}>
                                 <option>1</option>
+                                <option>2</option>
                                 <option>3</option>
                                 <option>5</option>
                                 <option>7</option>
+                                <option>10</option>
                             </select>
                         </td>
                     </tr>
@@ -55,9 +57,11 @@ export default class GameSettings extends Component {
                                     value={dimensions.fieldWidth}
                                     onChange={(e) => dispatch(AppActions.widthChanged(Number(e.target.value)))}>
                                 <option>1</option>
+                                <option>2</option>
                                 <option>3</option>
                                 <option>5</option>
                                 <option>7</option>
+                                <option>10</option>
                             </select>
                         </td>
                     </tr>
