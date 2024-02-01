@@ -49,4 +49,10 @@ export default class CellColor {
         return color;
     }
 
+    static pickRandomColor = (colorArray) => {
+        let index = Math.floor(Math.random() * colorArray.length);
+        console.log("index " + index);
+        return colorArray[index];
+    }
+
 };

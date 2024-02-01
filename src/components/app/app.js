@@ -251,18 +251,11 @@ export default class App extends Component {
 
     _nextColorToFind = (newState) => {
         let freeColors = getStatistics(newState.game.field).statistics.filter((item) => item.open < item.total)
-            .map((item) => {
-                const count = item.total - item.open;
-                const colors = new Array(count);
-                return colors.fill(item.color)
-            }).flat()
+            .map((item) => { return new Array(item.total - item.open).fill(item.color) })
+            .flat()
         this._shuffleArray(freeColors);
 
-
-        console.log(freeColors);
-
-
-        newState.game.colorToFind = CellColor.randomColor();
+        newState.game.colorToFind = CellColor.pickRandomColor(freeColors);
     };
 
     _restartGame = () => {
