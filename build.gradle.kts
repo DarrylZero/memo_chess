@@ -1,4 +1,3 @@
-import com.bmuschko.gradle.docker.tasks.image.*
 
 plugins {
     id("com.github.node-gradle.node") version "7.0.1"
