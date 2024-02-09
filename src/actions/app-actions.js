@@ -17,12 +17,11 @@ export default class AppActions {
         return {type: this.RESTART}
     };
 
-
     static debugAction = (actionId) => {
         return {type: this.DEBUG_ACTION, actionId}
     };
 
-    static misclickedTimeChanged = (misClickedCellsShowTime) => {
+    static misClickedTimeChanged = (misClickedCellsShowTime) => {
         return {type: this.MISCLICKED_TIME_CHANGED, misClickedCellsShowTime}
     };
 

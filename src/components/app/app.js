@@ -11,14 +11,20 @@ import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
 import AppActions from "../../actions/app-actions";
 import GameState from "../../consts/game-state";
-import SuggestionsService from '../service-remote/suggestions-service'
-import {isOver} from "../../datautils/stat-utils";
+import {getStatistics, isOver} from "../../datautils/stat-utils";
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {BLUE} = CellColor;
-const {CELL_CLICKED, RESTART, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED,
-    HEIGHT_CHANGED, WIDTH_CHANGED} = AppActions;
+const {
+    CELL_CLICKED,
+    RESTART,
+    DEBUG_ACTION,
+    ACTIVE_PANE_CHANGED,
+    MISCLICKED_TIME_CHANGED,
+    HEIGHT_CHANGED,
+    WIDTH_CHANGED
+} = AppActions;
 
 
 const {CREATED, STARTED} = GameState;
@@ -126,8 +132,9 @@ export default class App extends Component {
                 return;
             }
 
-            default:
+            default: {
                 throw `unknown event ${action}`;
+            }
         }
 
     };
@@ -187,18 +194,11 @@ export default class App extends Component {
                 />;
             }
 
-            case AppPanes.SUGGESTION: {
-                return <SuggestionsService settings={this.state.settings} />;
-            }
-
-
             case AppPanes.ABOUT : {
                 return <GameAbout state={this.state} dispatch={this.dispatch}/>;
             }
 
-            default: {
-                throw `Unexpected pane ${this.state.game.activePane}`;
-            }
+            default: throw `Unexpected pane ${this.state.game.activePane}`;
         }
     };
 
@@ -207,7 +207,6 @@ export default class App extends Component {
         switch (paneId) {
             case  AppPanes.GAME :
             case  AppPanes.SETTINGS :
-            case  AppPanes.SUGGESTION :
             case  AppPanes.ABOUT : {
                 newState.game.activePane = paneId;
                 break;
@@ -251,7 +250,12 @@ export default class App extends Component {
     };
 
     _nextColorToFind = (newState) => {
-        newState.game.colorToFind = CellColor.randomColor();
+        let freeColors = getStatistics(newState.game.field).statistics.filter((item) => item.open < item.total)
+            .map((item) => { return new Array(item.total - item.open).fill(item.color) })
+            .flat()
+        this._shuffleArray(freeColors);
+
+        newState.game.colorToFind = CellColor.pickRandomColor(freeColors);
     };
 
     _restartGame = () => {
@@ -286,6 +290,16 @@ export default class App extends Component {
             rows.push(aRow);
         }
         return rows;
+    }
+
+
+    _shuffleArray = (array) => {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
     }
 
 

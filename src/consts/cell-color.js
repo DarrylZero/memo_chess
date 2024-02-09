@@ -42,11 +42,17 @@ export default class CellColor {
     };
 
     static randomColor = () => {
-        let color = this.pickColor(Math.round(Math.random() * this.MAX_COLOR_COUNT));
+        let color = undefined;
         while (color === undefined) {
             color = this.pickColor(Math.round(Math.random() * this.MAX_COLOR_COUNT));
         }
         return color;
+    }
+
+    static pickRandomColor = (colorArray) => {
+        let index = Math.floor(Math.random() * colorArray.length);
+        console.log("index " + index);
+        return colorArray[index];
     }
 
 };

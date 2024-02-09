@@ -14,8 +14,6 @@ export default class BattleFieldHeader extends Component {
         const style = `quadrant btn ${buttonStyle}`;
         const buttonColorToFindCaption = mode === STARTED ? "Color to find" : "";
 
-
-
         return (
             <div className ="battle-field-header">
                 <button type="button" className={style}>{buttonColorToFindCaption}</button>
