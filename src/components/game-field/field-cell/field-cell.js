@@ -8,7 +8,7 @@ const {CELL_STATUS_CLOSED} = CellStatus;
 export default class FieldCell extends Component {
 
     render() {
-        const {colIndex, rowIndex, onCellClick, cell: {status, color}} = this.props;
+        const {colIndex, rowIndex, onCellClick, cell: {status, color, letter}} = this.props;
         const className = this._getClassName(status, color);
         return <button className={className} onClick={() => onCellClick(colIndex, rowIndex)}/>
     }

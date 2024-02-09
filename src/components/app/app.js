@@ -11,14 +11,21 @@ import Timer from "../../services/timer/timer";
 import GameField from "../game-field/game-field";
 import AppActions from "../../actions/app-actions";
 import GameState from "../../consts/game-state";
-import SuggestionsService from '../service-remote/suggestions-service'
-import {isOver} from "../../datautils/stat-utils";
+import {getStatistics, isOver} from "../../datautils/stat-utils";
+
 
 const {DEFAULT_CELL_STATUS, CELL_STATUS_CLOSED, CELL_STATUS_REVEALED, CELL_STATUS_TEMPORARILY_SHOWN} = CellStatus;
 const {GAME} = AppPanes;
 const {BLUE} = CellColor;
-const {CELL_CLICKED, RESTART, DEBUG_ACTION, ACTIVE_PANE_CHANGED, MISCLICKED_TIME_CHANGED,
-    HEIGHT_CHANGED, WIDTH_CHANGED} = AppActions;
+const {
+    CELL_CLICKED,
+    RESTART,
+    DEBUG_ACTION,
+    ACTIVE_PANE_CHANGED,
+    MISCLICKED_TIME_CHANGED,
+    HEIGHT_CHANGED,
+    WIDTH_CHANGED
+} = AppActions;
 
 
 const {CREATED, STARTED} = GameState;
@@ -187,11 +194,6 @@ export default class App extends Component {
                 />;
             }
 
-            case AppPanes.SUGGESTION: {
-                return <SuggestionsService settings={this.state.settings} />;
-            }
-
-
             case AppPanes.ABOUT : {
                 return <GameAbout state={this.state} dispatch={this.dispatch}/>;
             }
@@ -207,7 +209,6 @@ export default class App extends Component {
         switch (paneId) {
             case  AppPanes.GAME :
             case  AppPanes.SETTINGS :
-            case  AppPanes.SUGGESTION :
             case  AppPanes.ABOUT : {
                 newState.game.activePane = paneId;
                 break;
@@ -251,7 +252,12 @@ export default class App extends Component {
     };
 
     _nextColorToFind = (newState) => {
-        newState.game.colorToFind = CellColor.randomColor();
+        let freeColors = getStatistics(newState.game.field).statistics.filter((item) => item.open < item.total)
+            .map((item) => { return new Array(item.total - item.open).fill(item.color) })
+            .flat()
+        this._shuffleArray(freeColors);
+
+        newState.game.colorToFind = CellColor.pickRandomColor(freeColors);
     };
 
     _restartGame = () => {
@@ -272,15 +278,17 @@ export default class App extends Component {
 
     _getRandomCells = () => {
         const rows = [];
+        const {fieldHeight, fieldWidth} = this.state.settings.dimensions
+        const alphabet = this._shuffleArray([...'abcdefghijklmnopqrstuvwxyz']);
 
-
-        for (let rowIndex = 0; rowIndex < this.state.settings.dimensions.fieldHeight; rowIndex++) {
+        for (let rowIndex = 0; rowIndex < fieldHeight; rowIndex++) {
             const aRow = [];
-            for (let colIndex = 0; colIndex < this.state.settings.dimensions.fieldWidth; colIndex++) {
+            for (let colIndex = 0; colIndex < fieldWidth; colIndex++) {
                 aRow.push({
                     status: DEFAULT_CELL_STATUS,
                     color: CellColor.randomColor(),
-                    takenBy: null
+                    takenBy: null,
+                    letter: this._randomElement(alphabet)
                 });
             }
             rows.push(aRow);
@@ -288,5 +296,19 @@ export default class App extends Component {
         return rows;
     }
 
+
+    _shuffleArray = (array) => {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }
+
+    _randomElement = (array) => {
+        return array[Math.floor(Math.random() * (i + 1))];
+    }
 
 };
